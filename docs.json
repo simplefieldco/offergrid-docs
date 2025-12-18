@@ -3,9 +3,7 @@
   "theme": "maple",
   "name": "Offergrid Docs",
   "colors": {
-    "primary": "#f15a24",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#f15a24"
   },
   "favicon": "/favicon.svg",
   "navigation": {
