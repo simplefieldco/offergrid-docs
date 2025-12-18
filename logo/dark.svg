@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 297.52 49.85">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #f15a24;
+      }
+
+      .cls-2 {
+        font-family: Inter-Medium, Inter;
+        font-variation-settings: 'wght' 500, 'slnt' 0;
+        font-weight: 500;
+      }
+
+      .cls-2, .cls-3 {
+        fill: #fff;
+        font-size: 36.7px;
+      }
+
+      .cls-4 {
+        letter-spacing: -.1em;
+      }
+
+      .cls-5 {
+        letter-spacing: -.06em;
+      }
+
+      .cls-3 {
+        font-family: Inter-Bold, Inter;
+        font-variation-settings: 'wght' 700, 'slnt' 0;
+        font-weight: 700;
+      }
+
+      .cls-3, .cls-6 {
+        letter-spacing: -.02em;
+      }
+
+      .cls-7 {
+        letter-spacing: -.02em;
+      }
+
+      .cls-8 {
+        letter-spacing: -.04em;
+      }
+
+      .cls-9 {
+        letter-spacing: .1em;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <g>
+      <g>
+        <rect class="cls-1" x="33.94" y="40.04" width="7.41" height="4.36"/>
+        <rect class="cls-1" y="11.37" width="14.66" height="26.44"/>
+        <rect class="cls-1" x="33.94" y="4.57" width="7.41" height="4.57"/>
+        <rect class="cls-1" x="16.89" y="40.04" width="14.82" height="8.72"/>
+        <rect class="cls-1" x="7.33" y="4.57" width="7.33" height="4.57"/>
+        <rect class="cls-1" x="7.33" y="40.04" width="7.33" height="4.36"/>
+        <rect class="cls-1" x="16.89" width="14.82" height="9.13"/>
+        <rect class="cls-1" x="33.94" y="11.37" width="14.82" height="26.44"/>
+      </g>
+      <text class="cls-2" transform="translate(60.35 38.12)"><tspan class="cls-7" x="0" y="0">O</tspan><tspan class="cls-4" x="27.46" y="0">f</tspan><tspan class="cls-5" x="37.33" y="0">f</tspan><tspan class="cls-8" x="48.67" y="0">erg</tspan><tspan class="cls-6" x="102.58" y="0">r</tspan><tspan class="cls-8" x="115.95" y="0">i</tspan><tspan class="cls-9" x="123.62" y="0">d</tspan></text>
+      <text class="cls-3" transform="translate(208.33 38.04)"><tspan x="0" y="0">Docs</tspan></text>
+    </g>
+  </g>
+</svg>
