@@ -51,6 +51,10 @@
         "tab": "API reference",
         "groups": [
           {
+            "group": "Provider API",
+            "openapi": "https://offergrid-api.onrender.com/api-json"
+          },
+          {
             "group": "API documentation",
             "pages": [
               "api-reference/introduction"
