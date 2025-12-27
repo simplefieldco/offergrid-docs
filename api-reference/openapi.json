@@ -1,216 +1,575 @@
 {
-  "openapi": "3.1.0",
-  "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
-    },
-    "version": "1.0.0"
-  },
-  "servers": [
-    {
-      "url": "http://sandbox.mintlify.com"
-    }
-  ],
-  "security": [
-    {
-      "bearerAuth": []
-    }
-  ],
+  "openapi": "3.0.0",
   "paths": {
-    "/plants": {
+    "/": {
       "get": {
-        "description": "Returns all plants from the system that the user has access to",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "The maximum number of results to return",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
+        "operationId": "AppController_getHello",
+        "parameters": [],
         "responses": {
           "200": {
-            "description": "Plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
+            "description": ""
           }
-        }
-      },
+        },
+        "tags": [
+          "App"
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "AppController_health",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "App"
+        ]
+      }
+    },
+    "/links": {
       "post": {
-        "description": "Creates a new plant in the store",
+        "operationId": "LinksController_create",
+        "parameters": [],
         "requestBody": {
-          "description": "Plant to add to the store",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Plant"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
+                "$ref": "#/components/schemas/Function"
               }
             }
           }
-        }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Links"
+        ]
+      },
+      "get": {
+        "operationId": "LinksController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Links"
+        ]
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
+    "/links/{id}": {
+      "get": {
+        "operationId": "LinksController_findOne",
         "parameters": [
           {
             "name": "id",
-            "in": "path",
-            "description": "ID of plant to delete",
             "required": true,
+            "in": "path",
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
             }
           }
         ],
         "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Links"
+        ]
+      },
+      "patch": {
+        "operationId": "LinksController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
             }
           }
-        }
-      }
-    }
-  },
-  "webhooks": {
-    "/plant/webhook": {
-      "post": {
-        "description": "Information about a new plant added to the store",
+        ],
         "requestBody": {
-          "description": "Plant added to the store",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "$ref": "#/components/schemas/Function"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
+            "description": ""
           }
-        }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
-          },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
-          }
-        }
+        },
+        "tags": [
+          "Links"
+        ]
       },
-      "NewPlant": {
-        "allOf": [
+      "delete": {
+        "operationId": "LinksController_remove",
+        "parameters": [
           {
-            "$ref": "#/components/schemas/Plant"
-          },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Links"
+        ]
+      }
+    },
+    "/offers": {
+      "post": {
+        "description": "Creates a new service offering for the authenticated provider team",
+        "operationId": "OffersController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOfferDto"
               }
             }
           }
+        },
+        "responses": {
+          "201": {
+            "description": "The offer has been successfully created"
+          },
+          "400": {
+            "description": "Invalid input data"
+          },
+          "401": {
+            "description": "Unauthorized - invalid API key"
+          }
+        },
+        "security": [
+          {
+            "team-api-key": []
+          },
+          {
+            "access-type": []
+          },
+          {
+            "publishable-key": []
+          }
+        ],
+        "summary": "Create a new offer",
+        "tags": [
+          "offers"
         ]
       },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
+      "get": {
+        "description": "Retrieves all offers for the authenticated provider team",
+        "operationId": "OffersController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of offers"
           },
-          "message": {
-            "type": "string"
+          "401": {
+            "description": "Unauthorized - invalid API key"
           }
-        }
+        },
+        "security": [
+          {
+            "team-api-key": []
+          },
+          {
+            "access-type": []
+          },
+          {
+            "publishable-key": []
+          }
+        ],
+        "summary": "Get all offers",
+        "tags": [
+          "offers"
+        ]
       }
     },
+    "/offers/{id}": {
+      "get": {
+        "description": "Retrieves a specific offer by ID for the authenticated team",
+        "operationId": "OffersController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Offer UUID",
+            "schema": {
+              "example": "550e8400-e29b-41d4-a716-446655440000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The offer details"
+          },
+          "401": {
+            "description": "Unauthorized - invalid API key"
+          },
+          "404": {
+            "description": "Offer not found"
+          }
+        },
+        "security": [
+          {
+            "team-api-key": []
+          },
+          {
+            "access-type": []
+          },
+          {
+            "publishable-key": []
+          }
+        ],
+        "summary": "Get offer by ID",
+        "tags": [
+          "offers"
+        ]
+      },
+      "patch": {
+        "description": "Updates an existing offer for the authenticated team",
+        "operationId": "OffersController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Offer UUID",
+            "schema": {
+              "example": "550e8400-e29b-41d4-a716-446655440000",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOfferDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The offer has been successfully updated"
+          },
+          "400": {
+            "description": "Invalid input data"
+          },
+          "401": {
+            "description": "Unauthorized - invalid API key"
+          },
+          "404": {
+            "description": "Offer not found"
+          }
+        },
+        "security": [
+          {
+            "team-api-key": []
+          },
+          {
+            "access-type": []
+          },
+          {
+            "publishable-key": []
+          }
+        ],
+        "summary": "Update offer",
+        "tags": [
+          "offers"
+        ]
+      },
+      "delete": {
+        "description": "Deletes an offer for the authenticated team",
+        "operationId": "OffersController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Offer UUID",
+            "schema": {
+              "example": "550e8400-e29b-41d4-a716-446655440000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The offer has been successfully deleted"
+          },
+          "401": {
+            "description": "Unauthorized - invalid API key"
+          },
+          "404": {
+            "description": "Offer not found"
+          }
+        },
+        "security": [
+          {
+            "team-api-key": []
+          },
+          {
+            "access-type": []
+          },
+          {
+            "publishable-key": []
+          }
+        ],
+        "summary": "Delete offer",
+        "tags": [
+          "offers"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "OfferGrid API",
+    "description": "B2B marketplace API connecting service providers with reseller partners. Streamlines distribution and sale of essential services like internet, TV, security, energy, and insurance.",
+    "version": "1.0",
+    "contact": {
+
+    }
+  },
+  "tags": [
+    {
+      "name": "offers",
+      "description": "Service offerings management"
+    },
+    {
+      "name": "links",
+      "description": "Partner links management"
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://offergrid-api.onrender.com",
+      "description": "Production"
+    },
+    {
+      "url": "http://localhost:3000",
+      "description": "Local development"
+    }
+  ],
+  "components": {
     "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
+      "publishable-key": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-stack-publishable-client-key",
+        "description": "Stack Auth publishable client key"
+      },
+      "access-type": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-stack-access-type",
+        "description": "Access type (should be \"server\")"
+      },
+      "team-api-key": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-stack-team-api-key",
+        "description": "Team API key for authentication"
+      }
+    },
+    "schemas": {
+      "Function": {
+        "type": "object",
+        "properties": {
+
+        }
+      },
+      "CreateOfferDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Public-facing name of the offer",
+            "example": "High-Speed Internet 1000 Mbps"
+          },
+          "internalName": {
+            "type": "string",
+            "description": "Internal name for tracking (not shown to customers)",
+            "example": "HSI-1000-Q4-2024"
+          },
+          "category": {
+            "type": "string",
+            "description": "Service category",
+            "enum": [
+              "internet",
+              "television",
+              "security",
+              "energy",
+              "insurance",
+              "other"
+            ],
+            "example": "internet"
+          },
+          "status": {
+            "type": "string",
+            "description": "Current status of the offer",
+            "enum": [
+              "draft",
+              "active",
+              "inactive",
+              "archived"
+            ],
+            "example": "draft",
+            "default": "draft"
+          },
+          "sku": {
+            "type": "string",
+            "description": "Stock Keeping Unit (SKU) - must be unique",
+            "example": "INT-1000-001"
+          },
+          "externalId": {
+            "type": "string",
+            "description": "External system identifier",
+            "example": "ext-12345"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Custom metadata as JSON object",
+            "example": {
+              "tags": [
+                "fiber",
+                "residential"
+              ],
+              "priority": 1
+            }
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of the offer",
+            "example": "Blazing fast fiber internet with unlimited data"
+          },
+          "internalDescription": {
+            "type": "string",
+            "description": "Internal notes and description",
+            "example": "Q4 promotional offer for new markets"
+          },
+          "marketingHeadline": {
+            "type": "string",
+            "description": "Marketing headline",
+            "example": "Get Lightning-Fast Internet Today!"
+          },
+          "marketingDescription": {
+            "type": "string",
+            "description": "Marketing description",
+            "example": "Experience the future of connectivity with our fiber-optic network"
+          },
+          "keyFeatures": {
+            "description": "Array of key features",
+            "example": [
+              "1000 Mbps download",
+              "Unlimited data",
+              "No contract"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "imageUrl": {
+            "type": "string",
+            "description": "URL to offer image",
+            "example": "https://cdn.example.com/offers/internet-1000.jpg"
+          },
+          "overview": {
+            "type": "string",
+            "description": "Detailed overview of the offer",
+            "example": "This package includes installation, router, and 24/7 support"
+          },
+          "submissionUrl": {
+            "type": "string",
+            "description": "URL for order submission",
+            "example": "https://provider.example.com/api/orders"
+          },
+          "submissionConfig": {
+            "type": "object",
+            "description": "Submission configuration including form fields",
+            "example": {
+              "formFields": [
+                {
+                  "name": "address",
+                  "type": "text",
+                  "required": true
+                },
+                {
+                  "name": "phone",
+                  "type": "tel",
+                  "required": true
+                }
+              ],
+              "metadata": []
+            }
+          },
+          "serviceSpecificData": {
+            "type": "object",
+            "description": "Service-specific data (e.g., speeds for internet, channels for TV)",
+            "example": {
+              "downloadSpeed": "1000 Mbps",
+              "uploadSpeed": "1000 Mbps",
+              "connectionType": "Fiber"
+            }
+          },
+          "pricingType": {
+            "type": "string",
+            "description": "Pricing type",
+            "enum": [
+              "fixed",
+              "variable",
+              "tiered",
+              "custom"
+            ],
+            "example": "fixed"
+          },
+          "monthlyPrice": {
+            "type": "number",
+            "description": "Monthly recurring price",
+            "example": 59.99,
+            "minimum": 0
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "UpdateOfferDto": {
+        "type": "object",
+        "properties": {
+
+        }
       }
     }
   }
