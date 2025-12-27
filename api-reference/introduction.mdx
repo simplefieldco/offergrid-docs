@@ -1,33 +1,57 @@
 ---
 title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+description: 'OfferGrid API documentation for managing service offerings and partner links'
 ---
-
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
 
 ## Welcome
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+The OfferGrid API is a B2B marketplace API that connects service providers with reseller partners. It streamlines the distribution and sale of essential services like internet, TV, security, energy, and insurance.
 
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
+With the OfferGrid API, you can:
+
+- **Manage Service Offerings**: Create, update, retrieve, and delete service offers for your team
+- **Partner Links**: Manage partner links and distribution channels
+- **Automate Distribution**: Integrate your service catalog with reseller networks
+
+## Base URL
+
+The API is available at the following base URLs:
+
+- **Production**: `https://offergrid-api.onrender.com`
+- **Local Development**: `http://localhost:3000`
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+All API endpoints require authentication using a **Team API Key**. Include your team API key in the request headers for every API call.
 
-```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
+### Using the Team API Key
+
+Add the following header to your requests:
+
 ```
+x-stack-team-api-key: YOUR_TEAM_API_KEY
+```
+
+### Example Request
+
+Here's an example of making an authenticated request using cURL:
+
+```bash
+curl -X GET https://offergrid-api.onrender.com/offers \
+  -H "x-stack-team-api-key: YOUR_TEAM_API_KEY"
+```
+
+### Additional Headers
+
+Some endpoints may also require additional headers:
+
+- `x-stack-publishable-client-key`: Stack Auth publishable client key
+- `x-stack-access-type`: Access type (should be `"server"`)
+
+### Getting Your API Key
+
+To obtain your team API key, please contact your OfferGrid administrator or visit your team settings in the OfferGrid dashboard.
+
+<Warning>
+  Keep your API key secure and never expose it in client-side code or public repositories. Treat it like a password.
+</Warning>
