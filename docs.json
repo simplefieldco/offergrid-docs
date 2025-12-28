@@ -53,7 +53,7 @@
           },
           {
             "group": "Reseller API",
-            "openapi": "https://offergrid-api.onrender.com/api-json"
+            "openapi": "https://offergrid-api.onrender.com/openapi-reseller.json"
           }
         ]
       }
