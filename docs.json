@@ -49,11 +49,11 @@
           },
           {
             "group": "Provider API",
-            "openapi": "https://offergrid-api.onrender.com/openapi-provider.json"
+            "openapi": "https://offergrid-api.onrender.com/api-json"
           },
           {
             "group": "Reseller API",
-            "openapi": "https://offergrid-api.onrender.com/openapi-reseller.json"
+            "openapi": "https://offergrid-api.onrender.com/api-json"
           }
         ]
       }
