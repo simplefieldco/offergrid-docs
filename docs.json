@@ -42,20 +42,22 @@
       },
       {
         "tab": "API reference",
-        "groups": [
-          {
-            "group": "API documentation",
-            "pages": ["api-reference/introduction"]
-          },
-          {
-            "group": "Provider API",
-            "openapi": "https://offergrid-api.onrender.com/api-json"
-          },
-          {
-            "group": "Reseller API",
-            "openapi": "https://offergrid-api.onrender.com/openapi-reseller.json"
-          }
-        ]
+         "groups": [
+            {
+              "group": "API documentation",
+              "pages": ["api-reference/introduction"]
+            },
+            {                                                                                        "group": "Provider API",
+              "openapi": {                                                                              "source": "https://offergrid-api.onrender.com/openapi-provider.json",
+                "directory": "api-reference/provider"
+              }
+            },
+            {
+              "group": "Reseller API",
+              "openapi": {
+                "source": "https://offergrid-api.onrender.com/openapi-reseller.json",
+                "directory": "api-reference/reseller"                                                 }
+            }                                                                                     ]
       }
     ],
     "global": {
