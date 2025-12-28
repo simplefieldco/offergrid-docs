@@ -383,22 +383,10 @@
   ],
   "components": {
     "securitySchemes": {
-      "publishable-key": {
-        "type": "apiKey",
-        "in": "header",
-        "name": "x-stack-publishable-client-key",
-        "description": "Stack Auth publishable client key"
-      },
-      "access-type": {
-        "type": "apiKey",
-        "in": "header",
-        "name": "x-stack-access-type",
-        "description": "Access type (should be \"server\")"
-      },
       "team-api-key": {
         "type": "apiKey",
         "in": "header",
-        "name": "x-stack-team-api-key",
+        "name": "x-api-key",
         "description": "Team API key for authentication"
       }
     },
