@@ -1,6 +1,6 @@
 ---
-title: 'Introduction'
-description: 'OfferGrid API documentation for managing service offerings and partner links'
+title: "Introduction"
+description: "OfferGrid API documentation for managing service offerings and partner links"
 ---
 
 ## Welcome
@@ -29,7 +29,7 @@ All API endpoints require authentication using a **Team API Key**. Include your 
 Add the following header to your requests:
 
 ```
-x-stack-team-api-key: YOUR_TEAM_API_KEY
+x-api-key: YOUR_TEAM_API_KEY
 ```
 
 ### Example Request
@@ -38,15 +38,8 @@ Here's an example of making an authenticated request using cURL:
 
 ```bash
 curl -X GET https://offergrid-api.onrender.com/offers \
-  -H "x-stack-team-api-key: YOUR_TEAM_API_KEY"
+  -H "x-api-key: YOUR_TEAM_API_KEY"
 ```
-
-### Additional Headers
-
-Some endpoints may also require additional headers:
-
-- `x-stack-publishable-client-key`: Stack Auth publishable client key
-- `x-stack-access-type`: Access type (should be `"server"`)
 
 ### Getting Your API Key
 
