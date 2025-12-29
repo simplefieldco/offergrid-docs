@@ -1,0 +1,478 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "AppController_getHello",
+        "parameters": [],
+        "responses": { "200": { "description": "" } },
+        "tags": ["App"]
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "AppController_health",
+        "parameters": [],
+        "responses": { "200": { "description": "" } },
+        "tags": ["App"]
+      }
+    },
+    "/provider/offers": {
+      "post": {
+        "description": "Create a new service offering as a provider. The offer will be associated with your team.",
+        "operationId": "ProviderOffersController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateOfferDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Offer successfully created" },
+          "403": { "description": "Forbidden - Provider role required" }
+        },
+        "security": [{ "api-key": [] }],
+        "summary": "Create a new offer",
+        "tags": ["provider"]
+      },
+      "get": {
+        "description": "Retrieve all offers created by your provider team.",
+        "operationId": "ProviderOffersController_findAll",
+        "parameters": [],
+        "responses": { "200": { "description": "List of offers" } },
+        "security": [{ "api-key": [] }],
+        "summary": "List all your offers",
+        "tags": ["provider"]
+      }
+    },
+    "/provider/offers/{id}": {
+      "get": {
+        "description": "Retrieve details of a specific offer you created.",
+        "operationId": "ProviderOffersController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Offer details" },
+          "404": {
+            "description": "Offer not found or does not belong to your team"
+          }
+        },
+        "security": [{ "api-key": [] }],
+        "summary": "Get a specific offer",
+        "tags": ["provider"]
+      },
+      "patch": {
+        "description": "Update an existing offer. You can only update your own offers.",
+        "operationId": "ProviderOffersController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateOfferDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Offer successfully updated" },
+          "404": {
+            "description": "Offer not found or does not belong to your team"
+          }
+        },
+        "security": [{ "api-key": [] }],
+        "summary": "Update an offer",
+        "tags": ["provider"]
+      },
+      "delete": {
+        "description": "Permanently delete an offer. You can only delete your own offers.",
+        "operationId": "ProviderOffersController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Offer successfully deleted" },
+          "404": {
+            "description": "Offer not found or does not belong to your team"
+          }
+        },
+        "security": [{ "api-key": [] }],
+        "summary": "Delete an offer",
+        "tags": ["provider"]
+      }
+    },
+    "/provider/orders": {
+      "get": {
+        "description": "Retrieve all order items for your offers that need fulfillment. Each item represents a single offer ordered by a reseller.",
+        "operationId": "ProviderOrdersController_findAll",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filter by order item status",
+            "schema": {
+              "enum": [
+                "pending",
+                "submitted_to_provider",
+                "accepted",
+                "rejected",
+                "scheduled",
+                "in_progress",
+                "completed",
+                "active",
+                "cancelled",
+                "failed"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": { "200": { "description": "List of order items" } },
+        "security": [{ "api-key": [] }],
+        "summary": "List order items to fulfill",
+        "tags": ["provider"]
+      }
+    },
+    "/provider/orders/{itemId}": {
+      "get": {
+        "description": "Retrieve detailed information about a specific order item for fulfillment.",
+        "operationId": "ProviderOrdersController_findOne",
+        "parameters": [
+          {
+            "name": "itemId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Order item details" },
+          "404": {
+            "description": "Order item not found or does not belong to your team"
+          }
+        },
+        "security": [{ "api-key": [] }],
+        "summary": "Get order item details",
+        "tags": ["provider"]
+      }
+    },
+    "/provider/orders/{itemId}/status": {
+      "patch": {
+        "description": "Update the fulfillment status of an order item (e.g., accept, reject, schedule, complete). Use this to manage the order workflow from acceptance to completion.",
+        "operationId": "ProviderOrdersController_updateStatus",
+        "parameters": [
+          {
+            "name": "itemId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateItemStatusDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Order item status successfully updated" },
+          "404": {
+            "description": "Order item not found or does not belong to your team"
+          }
+        },
+        "security": [{ "api-key": [] }],
+        "summary": "Update order item status",
+        "tags": ["provider"]
+      }
+    }
+  },
+  "info": {
+    "title": "OfferGrid API",
+    "description": "**Provider API** - Create and manage service offerings, fulfill orders from resellers.\n\nAs a provider, you can:\n- Create and publish service offerings (internet, TV, security, energy, insurance)\n- Control which resellers can access your offers (all, preferred, or selected)\n- View and manage orders from resellers\n- Update order fulfillment status and schedule installations\n- Track order lifecycle from pending to completion",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [
+    {
+      "name": "provider",
+      "description": "Provider operations - Create offers, fulfill orders"
+    },
+    {
+      "name": "provider",
+      "description": "Provider operations - Create offers, fulfill orders"
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://offergrid-api.onrender.com",
+      "description": "Production"
+    },
+    { "url": "http://localhost:3000", "description": "Local development" }
+  ],
+  "components": {
+    "securitySchemes": {
+      "api-key": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key",
+        "description": "Team API key for authentication. Your team role (provider/reseller/hybrid) determines which endpoints you can access."
+      }
+    },
+    "schemas": {
+      "CreateOfferDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Public-facing name of the offer",
+            "example": "High-Speed Internet 1000 Mbps"
+          },
+          "internalName": {
+            "type": "string",
+            "description": "Internal name for tracking (not shown to customers)",
+            "example": "HSI-1000-Q4-2024"
+          },
+          "category": {
+            "type": "string",
+            "description": "Service category",
+            "enum": [
+              "internet",
+              "television",
+              "security",
+              "energy",
+              "insurance",
+              "other"
+            ],
+            "example": "internet"
+          },
+          "status": {
+            "type": "string",
+            "description": "Current status of the offer",
+            "enum": ["draft", "active", "inactive", "archived"],
+            "example": "draft",
+            "default": "draft"
+          },
+          "sku": {
+            "type": "string",
+            "description": "Stock Keeping Unit (SKU) - must be unique",
+            "example": "INT-1000-001"
+          },
+          "externalId": {
+            "type": "string",
+            "description": "External system identifier",
+            "example": "ext-12345"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Custom metadata as JSON object",
+            "example": { "tags": ["fiber", "residential"], "priority": 1 }
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of the offer",
+            "example": "Blazing fast fiber internet with unlimited data"
+          },
+          "internalDescription": {
+            "type": "string",
+            "description": "Internal notes and description",
+            "example": "Q4 promotional offer for new markets"
+          },
+          "marketingHeadline": {
+            "type": "string",
+            "description": "Marketing headline",
+            "example": "Get Lightning-Fast Internet Today!"
+          },
+          "marketingDescription": {
+            "type": "string",
+            "description": "Marketing description",
+            "example": "Experience the future of connectivity with our fiber-optic network"
+          },
+          "keyFeatures": {
+            "description": "Array of key features",
+            "example": ["1000 Mbps download", "Unlimited data", "No contract"],
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "imageUrl": {
+            "type": "string",
+            "description": "URL to offer image",
+            "example": "https://cdn.example.com/offers/internet-1000.jpg"
+          },
+          "overview": {
+            "type": "string",
+            "description": "Detailed overview of the offer",
+            "example": "This package includes installation, router, and 24/7 support"
+          },
+          "submissionUrl": {
+            "type": "string",
+            "description": "URL for order submission",
+            "example": "https://provider.example.com/api/orders"
+          },
+          "submissionConfig": {
+            "type": "object",
+            "description": "Submission configuration including form fields",
+            "example": {
+              "formFields": [
+                { "name": "address", "type": "text", "required": true },
+                { "name": "phone", "type": "tel", "required": true }
+              ],
+              "metadata": []
+            }
+          },
+          "serviceSpecificData": {
+            "type": "object",
+            "description": "Service-specific data (e.g., speeds for internet, channels for TV)",
+            "example": {
+              "downloadSpeed": "1000 Mbps",
+              "uploadSpeed": "1000 Mbps",
+              "connectionType": "Fiber"
+            }
+          },
+          "pricingType": {
+            "type": "string",
+            "description": "Pricing type",
+            "enum": ["fixed", "variable", "tiered", "custom"],
+            "example": "fixed"
+          },
+          "monthlyPrice": {
+            "type": "number",
+            "description": "Monthly recurring price",
+            "example": 59.99,
+            "minimum": 0
+          }
+        },
+        "required": ["name"]
+      },
+      "UpdateOfferDto": { "type": "object", "properties": {} },
+      "UpdateItemStatusDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "submitted_to_provider",
+              "accepted",
+              "rejected",
+              "scheduled",
+              "in_progress",
+              "completed",
+              "active",
+              "cancelled",
+              "failed"
+            ],
+            "description": "New status for the order item",
+            "example": "accepted"
+          },
+          "providerNotes": {
+            "type": "string",
+            "description": "Notes from provider about this status update",
+            "example": "Installation scheduled for next Tuesday"
+          },
+          "scheduledFor": {
+            "type": "string",
+            "description": "Scheduled date/time for installation or activation (ISO 8601)",
+            "example": "2025-01-15T10:00:00Z"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Additional metadata for this status update",
+            "example": {
+              "trackingNumber": "ABC123",
+              "estimatedCompletion": "2025-01-20"
+            }
+          }
+        },
+        "required": ["status"]
+      },
+      "OrderItemDto": {
+        "type": "object",
+        "properties": {
+          "offerId": {
+            "type": "string",
+            "description": "ID of the offer to order",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          }
+        },
+        "required": ["offerId"]
+      },
+      "ServiceAddressDto": {
+        "type": "object",
+        "properties": {
+          "street": { "type": "string", "example": "123 Main St" },
+          "city": { "type": "string", "example": "San Francisco" },
+          "state": { "type": "string", "example": "CA" },
+          "zipCode": { "type": "string", "example": "94102" },
+          "country": { "type": "string", "example": "US" }
+        },
+        "required": ["street", "city", "state", "zipCode", "country"]
+      },
+      "CustomerInfoDto": {
+        "type": "object",
+        "properties": {
+          "fullName": { "type": "string", "example": "John Doe" },
+          "email": { "type": "string", "example": "john@example.com" },
+          "phone": { "type": "string", "example": "+1-555-123-4567" }
+        },
+        "required": ["fullName", "email", "phone"]
+      },
+      "CreateOrderDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "description": "Array of items to order (offers)",
+            "example": [{ "offerId": "123e4567-e89b-12d3-a456-426614174000" }],
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/OrderItemDto" }
+          },
+          "serviceAddress": {
+            "description": "Service address for installation",
+            "allOf": [{ "$ref": "#/components/schemas/ServiceAddressDto" }]
+          },
+          "customerInfo": {
+            "description": "Customer information",
+            "allOf": [{ "$ref": "#/components/schemas/CustomerInfoDto" }]
+          },
+          "notes": {
+            "type": "string",
+            "description": "Additional notes for the order",
+            "example": "Customer prefers morning installations"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Additional metadata for the order",
+            "example": {
+              "referralSource": "property-listing",
+              "unitNumber": "4B"
+            }
+          }
+        },
+        "required": ["items", "serviceAddress", "customerInfo"]
+      },
+      "Function": { "type": "object", "properties": {} }
+    }
+  }
+}
