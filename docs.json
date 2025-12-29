@@ -48,13 +48,6 @@
             "pages": ["api-reference/introduction"]
           },
           {
-            "group": "Provider API",
-            "openapi": {
-              "source": "/openapi/provider-openapi.json",
-              "directory": "api-reference/provider"
-            }
-          },
-          {
             "group": "Reseller API",
             "openapi": "https://offergrid-api.onrender.com/openapi-reseller.json"
           }
