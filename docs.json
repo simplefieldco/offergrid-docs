@@ -51,7 +51,7 @@
             "group": "Provider API",
             "openapi": {
               "source": "/openapi/provider-openapi.json",
-              "directory": "api-reference/provider"
+              "directory": "provider-api-reference"
             }
           }
         ]
