@@ -50,7 +50,7 @@
           {
             "group": "Provider API",
             "openapi": {
-              "source": "https://offergrid-api.onrender.com/api-json",
+              "source": "https://offergrid-api.onrender.com/openapi-provider",
               "directory": "provider-api-reference"
             }
           }
