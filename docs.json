@@ -53,6 +53,13 @@
               "source": "https://offergrid-api.onrender.com/openapi-provider",
               "directory": "provider-api-reference"
             }
+          },
+          {
+            "group": "Reseller API",
+            "openapi": {
+              "source": "https://offergrid-api.onrender.com/openapi-reseller",
+              "directory": "reseller-api-reference"
+            }
           }
         ]
       }
