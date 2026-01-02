@@ -1,0 +1,365 @@
+---
+title: 'Preferred Reseller Programs'
+description: 'Setting up and managing preferred partner lists'
+icon: 'star'
+---
+
+## Overview
+
+Preferred reseller programs let you reward top-performing partners with exclusive benefits while maintaining quality control over who can access your services.
+
+## Why Create a Preferred Program?
+
+### Benefits for Providers
+
+- **Quality control**: Work with partners who meet your standards
+- **Better margins**: Reduce costs by working with efficient partners
+- **Predictable volume**: Build recurring business with known partners
+- **Competitive advantage**: Attract top resellers with exclusive offerings
+
+### Benefits for Resellers
+
+- **Exclusive access**: Services not available to general public
+- **Better pricing**: Improved margins on premium offers
+- **Priority support**: Faster response times, dedicated contacts
+- **Early access**: New services before broad launch
+
+## Setting Up Your Program
+
+### Step 1: Define Criteria
+
+Decide what makes a reseller "preferred":
+
+**Quantitative metrics**:
+- Minimum monthly order volume (e.g., 10+ orders/month)
+- Acceptance rate threshold (e.g., 90%+)
+- Completion rate (e.g., 95%+)
+- Customer satisfaction score (e.g., 4.5+ stars)
+- Tenure on platform (e.g., 3+ months)
+
+**Qualitative factors**:
+- Industry expertise
+- Geographic coverage
+- Target customer segments
+- Brand alignment
+- Communication quality
+
+<Tip>
+  Start with objective metrics first. Add subjective criteria only for strategic partnerships.
+</Tip>
+
+### Step 2: Identify Candidates
+
+Review existing resellers against your criteria:
+
+```sql
+-- Example query for identifying candidates
+SELECT
+  reseller_id,
+  COUNT(*) as total_orders,
+  AVG(acceptance_rate) as avg_acceptance,
+  AVG(completion_rate) as avg_completion,
+  AVG(customer_rating) as avg_rating
+FROM orders
+WHERE created_at >= DATE_SUB(NOW(), INTERVAL 90 DAY)
+GROUP BY reseller_id
+HAVING total_orders >= 10
+  AND avg_acceptance >= 0.90
+  AND avg_completion >= 0.95
+  AND avg_rating >= 4.5
+ORDER BY total_orders DESC;
+```
+
+### Step 3: Add to Preferred List
+
+Via API:
+
+```bash
+curl -X POST "https://offergrid-api.onrender.com/provider/partners/preferred" \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "resellerTeamId": "team-abc-123",
+    "tier": "preferred",
+    "effectiveDate": "2025-01-01",
+    "notes": "High-volume partner with excellent completion rates"
+  }'
+```
+
+Via Dashboard:
+1. Navigate to **Partners** → **Preferred Resellers**
+2. Click **Add Partner**
+3. Search for reseller by name or ID
+4. Add notes about why they qualify
+5. Click **Add to List**
+
+### Step 4: Create Preferred Offers
+
+Create offers visible only to preferred partners:
+
+```json
+{
+  "name": "Premium Business Internet - Preferred Partner Pricing",
+  "category": "internet",
+  "status": "active",
+  "visibility": "preferred",
+  "monthlyPrice": 74.99,
+  "internalName": "Bus-Internet-Preferred",
+  "description": "Special pricing for preferred partners only"
+}
+```
+
+## Program Tiers
+
+Many providers use multi-tier programs:
+
+### Single Tier: Preferred
+
+**Simple approach**: You're either preferred or you're not.
+
+**Benefits**:
+- Easy to understand
+- Simple to manage
+- Clear entry criteria
+
+**Example**:
+- **Standard**: Public offers at regular pricing
+- **Preferred**: Exclusive offers with 10% better pricing
+
+### Multi-Tier: Bronze/Silver/Gold
+
+**Graduated approach**: Multiple levels with increasing benefits.
+
+**Benefits**:
+- Motivates progression
+- Rewards top performers more
+- Flexibility in partnerships
+
+**Example tiers**:
+
+```
+Bronze (All resellers):
+- Public offers
+- Standard pricing
+- Standard support
+
+Silver (10+ orders/month, 90%+ completion):
+- Silver-exclusive offers
+- 5% better pricing
+- Priority support
+
+Gold (50+ orders/month, 95%+ completion):
+- Gold-exclusive offers
+- 10% better pricing
+- Dedicated account manager
+- Co-marketing opportunities
+```
+
+## Managing the Program
+
+### Regular Reviews
+
+**Monthly**:
+- Check for partners who now qualify
+- Identify partners falling below standards
+- Review program effectiveness
+
+**Quarterly**:
+- Audit all preferred partners
+- Adjust criteria if needed
+- Send performance reports to partners
+
+### Adding Partners
+
+Notify partners when adding them:
+
+```
+Subject: Welcome to [Your Company] Preferred Partner Program
+
+Congratulations! Based on your outstanding performance, you've been
+selected for our Preferred Partner Program.
+
+As a preferred partner, you now have access to:
+- Exclusive service offers
+- 10% better pricing on all services
+- Priority support response
+- Early access to new services
+
+Your partnership metrics:
+- Orders last quarter: 45
+- Acceptance rate: 96%
+- Completion rate: 98%
+- Customer rating: 4.8/5
+
+Thank you for your excellent work. We look forward to continued growth together!
+```
+
+### Removing Partners
+
+If a partner falls below standards:
+
+1. **Warning**: Notify them they're at risk
+2. **Grace period**: Give 30-60 days to improve
+3. **Removal**: Remove from list if no improvement
+4. **Communication**: Explain why and how to regain status
+
+```bash
+# Remove from preferred list
+curl -X DELETE "https://offergrid-api.onrender.com/provider/partners/preferred/team-abc-123" \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
+## Exclusive Offers for Preferred Partners
+
+### Better Pricing
+
+Offer same service at different price points:
+
+```json
+// Public offer
+{
+  "name": "Business Internet 1000 Mbps",
+  "visibility": "public",
+  "monthlyPrice": 99.99
+}
+
+// Preferred offer
+{
+  "name": "Business Internet 1000 Mbps - Preferred Pricing",
+  "visibility": "preferred",
+  "monthlyPrice": 89.99,
+  "internalName": "Bus-1000-Preferred"
+}
+```
+
+### Premium Services
+
+Services only available to preferred partners:
+
+```json
+{
+  "name": "Enterprise Managed Security - White Label",
+  "visibility": "preferred",
+  "monthlyPrice": 299.99,
+  "description": "Premium managed security with white-label options for your brand. Preferred partners only."
+}
+```
+
+### Early Access
+
+Launch new services to preferred partners first:
+
+```json
+{
+  "name": "New 5G Home Internet - Early Access",
+  "visibility": "preferred",
+  "monthlyPrice": 79.99,
+  "metadata": {
+    "earlyAccess": true,
+    "publicLaunchDate": "2025-03-01"
+  }
+}
+```
+
+## Program Communication
+
+### Partner Portal
+
+Provide a partner portal or dashboard showing:
+- Current tier status
+- Performance metrics
+- Next tier requirements
+- Exclusive offers available
+
+### Regular Updates
+
+**Monthly newsletter**:
+- New exclusive offers
+- Performance highlights
+- Tips for improving metrics
+- Industry insights
+
+**Quarterly reviews**:
+- Formal performance scorecards
+- Future planning
+- Feedback sessions
+
+## Measuring Success
+
+Track program impact:
+
+### Partner Metrics
+
+- **Enrollment**: # of partners in preferred tier
+- **Retention**: % of preferred partners retained quarter-over-quarter
+- **Graduation rate**: # of partners moving to preferred per month
+
+### Business Metrics
+
+- **Order volume**: Total orders from preferred vs. public partners
+- **Quality**: Acceptance and completion rates by tier
+- **Revenue**: Revenue per partner by tier
+- **Efficiency**: Fulfillment cost per order by tier
+
+### ROI Analysis
+
+Compare costs vs. benefits:
+
+**Costs**:
+- Reduced pricing (margin loss)
+- Support resources
+- Program management time
+
+**Benefits**:
+- Higher order volume
+- Better completion rates
+- Lower customer acquisition cost
+- Predictable revenue
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Make criteria objective">
+    Use measurable metrics (order volume, completion rate) as primary qualifiers. Minimize subjective decisions.
+  </Accordion>
+
+  <Accordion title="Publish tier requirements">
+    Make it clear what partners need to do to qualify. Transparency motivates improvement.
+  </Accordion>
+
+  <Accordion title="Review regularly">
+    Audit partner status quarterly. Remove partners who no longer meet standards.
+  </Accordion>
+
+  <Accordion title="Provide meaningful benefits">
+    Ensure preferred status actually helps partners succeed. Better pricing, exclusive access, or priority support.
+  </Accordion>
+
+  <Accordion title="Communicate changes">
+    When adding, removing, or changing tier criteria, communicate clearly and early.
+  </Accordion>
+
+  <Accordion title="Start small">
+    Launch with a small group of top performers. Expand as you refine the program.
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Reseller Relationships" icon="handshake" href="/providers/reseller-relationships">
+    Managing partner relationships
+  </Card>
+
+  <Card title="Offer Visibility" icon="eye" href="/providers/offer-visibility">
+    Control who sees your offers
+  </Card>
+
+  <Card title="Creating Offers" icon="plus-circle" href="/providers/creating-offers">
+    Learn about creating offers
+  </Card>
+
+  <Card title="API Reference" icon="code" href="/api-reference/introduction">
+    View complete API documentation
+  </Card>
+</CardGroup>

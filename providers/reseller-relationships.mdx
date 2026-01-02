@@ -1,0 +1,310 @@
+---
+title: 'Managing Reseller Relationships'
+description: 'Building and maintaining partnerships with resellers'
+icon: 'handshake'
+---
+
+## Overview
+
+Strong reseller partnerships drive sustained growth. OfferGrid gives you tools to identify, nurture, and manage relationships with your distribution partners.
+
+## Types of Reseller Partnerships
+
+### Public Distribution
+
+**Who**: All verified resellers on OfferGrid
+
+**Best for**:
+- Maximizing order volume
+- Brand awareness
+- Standard commodity services
+- Expanding market reach
+
+**Management**: Minimal required. Monitor order quality and address issues as they arise.
+
+### Preferred Partners
+
+**Who**: Resellers who meet your quality and performance standards
+
+**Best for**:
+- Mid-tier services requiring some expertise
+- Partners who consistently deliver
+- Building recurring business
+- Balancing reach and quality
+
+**Management**: Regular performance reviews, periodic communication, special pricing or incentives.
+
+### Strategic Partners
+
+**Who**: Top-performing resellers with exclusive access
+
+**Best for**:
+- Premium or complex services
+- High-value contracts
+- Regional exclusives
+- Long-term commitments
+
+**Management**: Dedicated account managers, custom pricing, co-marketing, quarterly business reviews.
+
+## Building Your Partner Network
+
+### Step 1: Start Broad
+
+Launch with public offers to:
+- Discover which resellers are interested
+- Test market demand
+- Identify high performers
+
+Monitor early orders to see who's sending quality business.
+
+### Step 2: Identify Top Performers
+
+Track metrics like:
+- **Order volume**: Total orders per month
+- **Order quality**: Acceptance rate, completion rate
+- **Customer satisfaction**: Feedback from end customers
+- **Response time**: How quickly they respond to issues
+
+### Step 3: Create Preferred Tier
+
+Move top performers to a preferred partner list:
+
+```bash
+POST /provider/partners/preferred
+{
+  "resellerTeamId": "team-abc-123",
+  "tier": "preferred",
+  "notes": "High-volume partner with 95% completion rate"
+}
+```
+
+Give preferred partners:
+- Access to exclusive offers
+- Better pricing
+- Priority support
+- Early access to new services
+
+### Step 4: Develop Strategic Partnerships
+
+For your very best partners:
+- Create custom offers with negotiated pricing
+- Use `visibility: "selected"` for exclusive access
+- Provide dedicated support contacts
+- Collaborate on marketing
+
+## Partner Communication
+
+### Regular Check-Ins
+
+**Monthly** (preferred partners):
+- Review order metrics
+- Discuss upcoming services
+- Address any issues
+- Share market insights
+
+**Quarterly** (strategic partners):
+- Formal business reviews
+- Performance scorecards
+- Planning for next quarter
+- Contract renewals or adjustments
+
+### Proactive Updates
+
+Notify partners when:
+- New services launch
+- Pricing changes
+- Service area expansions
+- Promotional offers available
+- Platform updates or downtime
+
+### Feedback Loops
+
+Ask for input on:
+- What services they need
+- Which ZIP codes have high demand
+- Competitive offerings
+- Process improvements
+
+## Performance Tracking
+
+Monitor these partner metrics:
+
+### Order Metrics
+
+- **Total orders**: Volume over time
+- **Acceptance rate**: % of their orders you accept
+- **Completion rate**: % successfully fulfilled
+- **Average order value**: Revenue per order
+
+### Quality Metrics
+
+- **Customer satisfaction**: End-customer feedback
+- **Cancellation rate**: Orders cancelled before completion
+- **Address accuracy**: Quality of customer information
+- **Response time**: Speed of partner communication
+
+### Growth Metrics
+
+- **Month-over-month growth**: Order volume trends
+- **New vs. repeat**: Customer acquisition patterns
+- **Service mix**: Which services they prefer
+
+## Partner Tiers & Incentives
+
+### Tier Structure Example
+
+**Bronze** (All resellers):
+- Standard pricing
+- Public offers
+- Standard support
+
+**Silver** (Preferred partners):
+- 5% better pricing
+- Early access to new services
+- Priority support queue
+- Monthly check-ins
+
+**Gold** (Strategic partners):
+- 10% better pricing
+- Exclusive offers
+- Dedicated account manager
+- Quarterly business reviews
+- Co-marketing opportunities
+
+### Promotion Criteria
+
+Define clear requirements for tier advancement:
+
+```
+Bronze → Silver:
+- 10+ orders per month
+- 90%+ acceptance rate
+- 4.5+ star customer rating
+- 3 months tenure
+
+Silver → Gold:
+- 50+ orders per month
+- 95%+ acceptance rate
+- 4.8+ star customer rating
+- 12 months tenure
+- Minimum revenue threshold
+```
+
+## Managing Problem Partners
+
+### Address Issues Early
+
+If a partner has:
+- High cancellation rates
+- Poor address quality
+- Customer complaints
+- Slow response times
+
+**Action**: Reach out proactively to discuss and resolve.
+
+### Progressive Response
+
+1. **First issue**: Friendly email or call to understand what happened
+2. **Repeat issues**: Formal conversation about expectations
+3. **Ongoing problems**: Remove from preferred list
+4. **Serious violations**: Block access to specific or all offers
+
+### Documentation
+
+Keep notes on partner interactions:
+
+```json
+{
+  "resellerTeamId": "team-xyz-789",
+  "tier": "silver",
+  "notes": [
+    {
+      "date": "2025-01-15",
+      "type": "performance_review",
+      "summary": "Discussed high cancellation rate (18%). Partner implementing new address validation process."
+    }
+  ]
+}
+```
+
+## Exclusive Partnerships
+
+### Regional Exclusives
+
+Grant one partner exclusive rights in a region:
+
+1. Create region-specific offer
+2. Set `visibility: "selected"`
+3. Add only that partner
+4. Define performance requirements
+5. Set review period (quarterly or annually)
+
+**Example agreement terms**:
+- Minimum monthly volume (20 orders)
+- Performance standards (95% completion rate)
+- Contract term (12 months)
+- Renewal criteria
+
+### Service Exclusives
+
+Give a partner exclusive rights to a specific service type:
+
+```json
+{
+  "name": "Premium Business Internet",
+  "visibility": "selected",
+  "allowedResellers": ["partner-abc-123"],
+  "metadata": {
+    "exclusiveUntil": "2025-12-31",
+    "minimumMonthlyOrders": 15
+  }
+}
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Start with data, not assumptions">
+    Let actual order performance guide tier assignments, not personal relationships.
+  </Accordion>
+
+  <Accordion title="Make tier criteria transparent">
+    Publish clear requirements so all partners know how to advance.
+  </Accordion>
+
+  <Accordion title="Communicate changes">
+    When promoting or demoting partners, explain why and what changed.
+  </Accordion>
+
+  <Accordion title="Reward performance">
+    Ensure top performers get tangible benefits—better pricing, exclusive access, dedicated support.
+  </Accordion>
+
+  <Accordion title="Be consistent">
+    Apply standards fairly across all partners. Don't play favorites.
+  </Accordion>
+
+  <Accordion title="Review regularly">
+    Audit partner performance quarterly. Market conditions and partner circumstances change.
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Preferred Resellers" icon="star" href="/providers/preferred-resellers">
+    Setting up preferred partner programs
+  </Card>
+
+  <Card title="Offer Visibility" icon="eye" href="/providers/offer-visibility">
+    Control who can see your offers
+  </Card>
+
+  <Card title="Order Fulfillment" icon="check-circle" href="/providers/receiving-orders">
+    Managing orders from partners
+  </Card>
+
+  <Card title="API Reference" icon="code" href="/api-reference/introduction">
+    View complete API documentation
+  </Card>
+</CardGroup>

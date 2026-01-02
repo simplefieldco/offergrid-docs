@@ -1,0 +1,426 @@
+---
+title: 'API Integration Guide'
+description: 'Integrate OfferGrid with your existing systems'
+icon: 'code'
+---
+
+## Overview
+
+The OfferGrid Provider API lets you automate offer management and order fulfillment by integrating directly with your existing systems.
+
+## Getting Started
+
+### 1. Get Your API Key
+
+Generate a Team API Key from your dashboard:
+
+1. Sign in to [offergrid.io](https://offergrid.io)
+2. Navigate to **Settings** → **API Keys**
+3. Click **Generate New Key**
+4. Save the key securely
+
+See [Authentication](/authentication) for detailed instructions.
+
+### 2. Choose Your Integration Approach
+
+**Option A: Direct API Calls**
+- Use HTTP requests from your application
+- Full control and flexibility
+- Best for custom integrations
+
+**Option B: Webhooks**
+- Receive real-time notifications
+- Event-driven architecture
+- Best for order automation
+
+**Option C: Scheduled Sync**
+- Poll API periodically
+- Simple to implement
+- Best for batch processing
+
+## Common Integration Patterns
+
+### Pattern 1: Automated Offer Sync
+
+Sync your internal product catalog to OfferGrid:
+
+```typescript
+// Example: Daily sync of offers from your CRM
+async function syncOffers() {
+  const internalOffers = await fetchFromCRM();
+
+  for (const offer of internalOffers) {
+    const offergridOffer = transformToOffergridFormat(offer);
+
+    // Check if offer exists
+    const existing = await findOfferBySKU(offer.sku);
+
+    if (existing) {
+      // Update existing offer
+      await updateOffer(existing.id, offergridOffer);
+    } else {
+      // Create new offer
+      await createOffer(offergridOffer);
+    }
+  }
+}
+
+// Transform your internal format to OfferGrid format
+function transformToOffergridFormat(internalOffer) {
+  return {
+    name: internalOffer.productName,
+    category: mapCategory(internalOffer.type),
+    sku: internalOffer.sku,
+    monthlyPrice: internalOffer.price,
+    status: internalOffer.isActive ? 'active' : 'inactive',
+    description: internalOffer.description,
+    serviceSpecificData: {
+      // Map category-specific fields
+    },
+  };
+}
+```
+
+Run this sync:
+- **Daily**: For frequently changing catalogs
+- **Hourly**: For dynamic pricing
+- **On-demand**: When products update in your system
+
+### Pattern 2: Real-Time Order Processing
+
+Use webhooks to process orders immediately:
+
+```typescript
+// Example: Webhook endpoint to receive new orders
+app.post('/webhooks/offergrid/orders', async (req, res) => {
+  const { event, orderId, itemId } = req.body;
+
+  if (event === 'order.created') {
+    // Fetch full order details
+    const order = await fetchOrderFromOffergrid(itemId);
+
+    // Check service availability
+    const available = await checkServiceability(order.serviceAddress);
+
+    if (available) {
+      // Auto-accept and create work order in your system
+      await acceptOrder(itemId);
+      await createWorkOrder(order);
+
+      // Schedule customer contact
+      await scheduleCustomerCall(order);
+    } else {
+      // Reject with reason
+      await rejectOrder(itemId, 'Service not available at this address');
+    }
+  }
+
+  res.status(200).send('OK');
+});
+```
+
+### Pattern 3: Status Sync from Fulfillment System
+
+Update OfferGrid when your internal status changes:
+
+```typescript
+// Example: Update OfferGrid when your CRM updates order status
+async function onWorkOrderStatusChange(workOrder) {
+  const statusMap = {
+    scheduled: 'scheduled',
+    in_progress: 'in_progress',
+    completed: 'completed',
+    failed: 'failed',
+  };
+
+  await updateOffergridOrderStatus(workOrder.offergridItemId, {
+    status: statusMap[workOrder.status],
+    providerNotes: workOrder.notes,
+    scheduledFor: workOrder.appointmentDate,
+    metadata: {
+      workOrderId: workOrder.id,
+      technicianId: workOrder.technicianId,
+    },
+  });
+}
+
+// Hook into your CRM's status change events
+crmSystem.on('workorder.status_changed', onWorkOrderStatusChange);
+```
+
+## Core API Operations
+
+### Managing Offers
+
+<AccordionGroup>
+  <Accordion title="Create an offer" icon="plus">
+    ```bash
+    POST /provider/offers
+    ```
+
+    ```json
+    {
+      "name": "High-Speed Internet 1000 Mbps",
+      "category": "internet",
+      "status": "active",
+      "monthlyPrice": 59.99
+    }
+    ```
+
+    Returns the created offer with assigned ID.
+  </Accordion>
+
+  <Accordion title="List all your offers" icon="list">
+    ```bash
+    GET /provider/offers
+    ```
+
+    Returns array of all offers for your team.
+  </Accordion>
+
+  <Accordion title="Update an offer" icon="pen">
+    ```bash
+    PATCH /provider/offers/{id}
+    ```
+
+    ```json
+    {
+      "monthlyPrice": 49.99,
+      "status": "active"
+    }
+    ```
+
+    Updates only the fields provided.
+  </Accordion>
+
+  <Accordion title="Delete an offer" icon="trash">
+    ```bash
+    DELETE /provider/offers/{id}
+    ```
+
+    Permanently removes the offer.
+  </Accordion>
+</AccordionGroup>
+
+### Managing Orders
+
+<AccordionGroup>
+  <Accordion title="List orders" icon="list">
+    ```bash
+    GET /provider/orders?status=pending
+    ```
+
+    Filter by status to get orders needing attention.
+  </Accordion>
+
+  <Accordion title="Get order details" icon="file">
+    ```bash
+    GET /provider/orders/{itemId}
+    ```
+
+    Returns full order details including customer info and service address.
+  </Accordion>
+
+  <Accordion title="Update order status" icon="check">
+    ```bash
+    PATCH /provider/orders/{itemId}/status
+    ```
+
+    ```json
+    {
+      "status": "accepted",
+      "providerNotes": "Order accepted. Customer will be contacted within 24 hours.",
+      "metadata": {}
+    }
+    ```
+
+    Updates order status and adds notes for reseller.
+  </Accordion>
+</AccordionGroup>
+
+## Error Handling
+
+Implement robust error handling:
+
+```typescript
+async function safeApiCall(apiFunction, retries = 3) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await apiFunction();
+    } catch (error) {
+      if (error.status === 401) {
+        // Authentication error - don't retry
+        throw new Error('Invalid API key');
+      }
+
+      if (error.status === 429) {
+        // Rate limited - wait and retry
+        await sleep(2 ** i * 1000);
+        continue;
+      }
+
+      if (error.status >= 500) {
+        // Server error - retry
+        await sleep(2 ** i * 1000);
+        continue;
+      }
+
+      // Client error (4xx) - don't retry
+      throw error;
+    }
+  }
+
+  throw new Error('Max retries exceeded');
+}
+```
+
+## Rate Limiting
+
+Be mindful of rate limits:
+
+- **Burst**: 100 requests per minute
+- **Sustained**: 10,000 requests per hour
+
+**Best practices**:
+- Implement exponential backoff
+- Cache responses when appropriate
+- Batch operations where possible
+- Use webhooks instead of polling
+
+## Security Best Practices
+
+<AccordionGroup>
+  <Accordion title="Store API keys securely">
+    Use environment variables or secure key management:
+
+    ```typescript
+    // ✅ Good
+    const apiKey = process.env.OFFERGRID_API_KEY;
+
+    // ❌ Bad
+    const apiKey = 'pk_live_abc123...'; // Never hardcode!
+    ```
+  </Accordion>
+
+  <Accordion title="Use HTTPS only">
+    Always use `https://` endpoints, never `http://`.
+  </Accordion>
+
+  <Accordion title="Validate webhook signatures">
+    Verify webhook requests actually come from OfferGrid:
+
+    ```typescript
+    function verifyWebhook(req) {
+      const signature = req.headers['x-offergrid-signature'];
+      const payload = JSON.stringify(req.body);
+      const expected = createHmac('sha256', webhookSecret)
+        .update(payload)
+        .digest('hex');
+
+      return signature === expected;
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Implement request timeouts">
+    Don't let API calls hang indefinitely:
+
+    ```typescript
+    const response = await fetch(url, {
+      headers: { 'x-api-key': apiKey },
+      signal: AbortSignal.timeout(10000), // 10 second timeout
+    });
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Testing Your Integration
+
+### 1. Use Draft Offers
+
+Test with `status: "draft"` offers that won't be visible to resellers:
+
+```json
+{
+  "name": "Test Offer - Do Not Order",
+  "status": "draft",
+  "monthlyPrice": 0.01
+}
+```
+
+### 2. Create Test Orders
+
+Work with support to create test orders for validation.
+
+### 3. Monitor Logs
+
+Watch your integration logs for errors:
+
+```typescript
+const logger = createLogger({
+  level: 'info',
+  format: format.json(),
+});
+
+logger.info('Order accepted', {
+  orderId: order.id,
+  offerId: order.offerId,
+  status: 'accepted',
+});
+```
+
+## Example Integration
+
+Full example of a provider integration:
+
+```typescript
+import { OffergridClient } from '@offergrid/node-sdk';
+
+const client = new OffergridClient({
+  apiKey: process.env.OFFERGRID_API_KEY,
+});
+
+// Sync offers daily
+cron.schedule('0 2 * * *', async () => {
+  await syncOffersToOffergrid();
+});
+
+// Process new orders via webhook
+app.post('/webhooks/offergrid', async (req, res) => {
+  const { event, itemId } = req.body;
+
+  if (event === 'order.created') {
+    await processNewOrder(itemId);
+  }
+
+  res.sendStatus(200);
+});
+
+// Update OfferGrid when internal status changes
+async function onInternalStatusChange(workOrder) {
+  await client.orders.updateStatus(workOrder.offergridItemId, {
+    status: workOrder.status,
+    providerNotes: workOrder.notes,
+  });
+}
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="API Reference" icon="book" href="/api-reference/introduction">
+    Complete API documentation
+  </Card>
+
+  <Card title="Webhooks" icon="webhook" href="/providers/webhooks">
+    Set up real-time notifications
+  </Card>
+
+  <Card title="Authentication" icon="key" href="/authentication">
+    API key management
+  </Card>
+
+  <Card title="Order Fulfillment" icon="check" href="/providers/receiving-orders">
+    Learn about order processing
+  </Card>
+</CardGroup>

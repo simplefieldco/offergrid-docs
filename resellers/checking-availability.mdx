@@ -1,0 +1,157 @@
+---
+title: 'Checking Availability'
+description: 'Verify service availability before placing orders'
+icon: 'location-dot'
+---
+
+## Overview
+
+Not all services are available everywhere. Always check availability before presenting options to avoid customer disappointment and order rejections.
+
+## Checking via ZIP Code
+
+### Dashboard
+
+1. Go to **Catalog**
+2. Enter ZIP code in the search filter
+3. View only services available in that area
+
+### API
+
+```bash
+GET /reseller/catalog?zipCode=94102
+```
+
+Returns only offers available at that ZIP code.
+
+<Tip>
+  Always filter by ZIP code first, then show customers their available options.
+</Tip>
+
+## Understanding Service Areas
+
+### ZIP Code Boundaries
+
+- Some providers serve entire ZIP codes
+- Others serve partial ZIP codes
+- Always verify specific addresses
+
+### Technology Availability
+
+**Fiber**: Limited to areas with fiber infrastructure
+**Cable**: Widely available in urban/suburban areas
+**DSL**: Available where phone lines exist
+**Wireless**: Coverage based on tower proximity
+**Satellite**: Available almost everywhere
+
+## Address-Specific Verification
+
+### When ZIP Code Isn't Enough
+
+Some situations require address-level verification:
+
+- Multi-dwelling units (apartments, condos)
+- Rural areas with sparse coverage
+- New construction or recently developed areas
+- Edge of service area boundaries
+
+### How to Verify
+
+**During order placement**:
+- Submit the order with full address details
+- Provider will accept or reject based on serviceability
+- Wait for provider confirmation before promising customer
+
+**Before order placement** (if available):
+- Contact provider support for pre-qualification
+- Use provider's own serviceability check
+- Ask about building-specific requirements
+
+## Common Availability Issues
+
+### Not in Service Area
+
+**Problem**: Address is outside provider's coverage
+
+**Solution**:
+- Try alternative providers
+- Check if service area is expanding
+- Consider different technology types
+
+### Building Restrictions
+
+**Problem**: HOA, landlord, or building policies prevent installation
+
+**Customer should**:
+- Check with property management
+- Review HOA rules
+- Get written approval if needed
+
+**You should**:
+- Note restrictions in order
+- Alert provider in advance
+- Set customer expectations
+
+### Technical Limitations
+
+**Problem**: Physical obstacles prevent service
+
+Examples:
+- No line of sight for satellite/wireless
+- Building wiring doesn't support fiber
+- Distance from telephone exchange (DSL)
+
+**Solution**:
+- Provider will identify during site survey
+- Present alternative technologies
+- Set realistic expectations upfront
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Always start with ZIP code">
+    Never show customers offers without checking ZIP code availability first.
+  </Accordion>
+
+  <Accordion title="Collect full address early">
+    Get complete address including unit number, building name, etc.
+  </Accordion>
+
+  <Accordion title="Set expectations about confirmation">
+    Tell customers that final availability is confirmed by the provider during order review.
+  </Accordion>
+
+  <Accordion title="Have backup options ready">
+    If first choice isn't available, have alternatives from other providers or technologies.
+  </Accordion>
+
+  <Accordion title="Note building types">
+    Single-family homes rarely have issues. Apartments, condos, and commercial buildings may require special approval.
+  </Accordion>
+</AccordionGroup>
+
+## Communicating Availability to Customers
+
+### When Service IS Available
+
+"Great news! [Service Name] is available at your address. The provider offers [speeds/features] for $[price]/month."
+
+### When Service Might Be Available
+
+"This service appears to be available in your ZIP code, but the provider will need to verify your specific address. I'll submit the order and they'll confirm within 24 hours."
+
+### When Service Is NOT Available
+
+"Unfortunately, [Service Name] isn't available at your address yet. However, I found [Alternative Service] which offers similar features..."
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Comparing Offers" icon="scale-balanced" href="/resellers/comparing-offers">
+    How to evaluate options
+  </Card>
+
+  <Card title="Creating Orders" icon="file-invoice" href="/resellers/creating-orders">
+    Place orders for customers
+  </Card>
+</CardGroup>

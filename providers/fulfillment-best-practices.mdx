@@ -1,0 +1,324 @@
+---
+title: 'Fulfillment Best Practices'
+description: 'Tips and strategies for smooth order fulfillment'
+icon: 'check-double'
+---
+
+## Overview
+
+Successful fulfillment leads to happy customers, satisfied resellers, and more business. Follow these best practices to streamline your operations and maximize success rates.
+
+## Response Time
+
+### Accept/Reject Within 24 Hours
+
+<Check>**Target**: Respond to new orders within 2-4 hours</Check>
+
+Fast response times:
+- Show resellers you're reliable
+- Keep customers engaged and excited
+- Reduce order cancellations
+- Improve your provider rating
+
+Set up automated notifications to alert your team immediately when orders arrive.
+
+### Communicate Delays Promptly
+
+If you can't respond quickly:
+- Update order status with a note
+- Set expectations for when you'll have an answer
+- Don't leave orders in `pending` for days
+
+```json
+{
+  "status": "submitted_to_provider",
+  "providerNotes": "Order received. Address verification in progress, will update within 24 hours."
+}
+```
+
+## Address Verification
+
+### Always Verify Service Availability
+
+Before accepting an order:
+
+<Steps>
+  <Step title="Check address format">
+    Ensure street, city, state, ZIP are complete and valid
+  </Step>
+
+  <Step title="Verify serviceability">
+    Confirm your service is available at that specific address
+  </Step>
+
+  <Step title="Check for restrictions">
+    Look for HOA restrictions, building policies, or other blockers
+  </Step>
+
+  <Step title="Validate unit numbers">
+    For apartments/condos, ensure unit number is correct
+  </Step>
+</Steps>
+
+### Common Address Issues
+
+Watch out for:
+- **Incorrect ZIP codes**: Verify ZIP matches city/state
+- **Missing unit numbers**: Apartment orders without unit info
+- **Ambiguous addresses**: "123 Main Street" exists in multiple cities
+- **New construction**: Addresses not yet in your system
+- **Rural routes**: Non-standard address formats
+
+<Tip>
+  When in doubt, contact the reseller to clarify address details before rejecting. They can often provide additional context.
+</Tip>
+
+## Scheduling & Communication
+
+### Contact Customers Promptly
+
+After accepting an order:
+- Contact customer within 24-48 hours
+- Offer multiple scheduling options
+- Confirm contact information
+- Set clear expectations
+
+### Provide Scheduling Details
+
+When setting `status: "scheduled"`, include:
+
+```json
+{
+  "status": "scheduled",
+  "scheduledFor": "2025-01-15T13:00:00Z",
+  "providerNotes": "Installation scheduled for Tuesday, Jan 15, 1-5 PM. Technician Mike Johnson will call 30 minutes before arrival.",
+  "metadata": {
+    "appointmentWindow": "1-5 PM",
+    "technicianName": "Mike Johnson",
+    "technicianPhone": "+1-555-999-8888",
+    "confirmationNumber": "CONF-12345"
+  }
+}
+```
+
+### Send Reminders
+
+- 48 hours before appointment
+- 24 hours before appointment
+- 30 minutes before technician arrival
+
+## Installation Quality
+
+### Arrive On Time
+
+- Honor appointment windows strictly
+- Call if running late
+- Update order status if delays occur
+
+### Complete Work Properly
+
+- Test all services before leaving
+- Verify customer satisfaction
+- Leave premises clean and organized
+- Provide account details and documentation
+
+### Update Status Accurately
+
+```json
+{
+  "status": "completed",
+  "providerNotes": "Installation completed successfully. All services tested and operational. Customer account #12345 active.",
+  "metadata": {
+    "accountNumber": "12345",
+    "completedDate": "2025-01-15",
+    "technicianId": "TECH-789"
+  }
+}
+```
+
+## Rejection Management
+
+### Be Specific About Reasons
+
+Don't just reject—explain why:
+
+<CodeGroup>
+
+```json Bad Example
+{
+  "status": "rejected",
+  "providerNotes": "Cannot fulfill order."
+}
+```
+
+```json Good Example
+{
+  "status": "rejected",
+  "providerNotes": "Service not available at this address. The building does not have fiber infrastructure. Cable internet up to 500 Mbps is available as an alternative. Contact us for details."
+}
+```
+
+</CodeGroup>
+
+### Suggest Alternatives
+
+When rejecting, help resellers find solutions:
+- Recommend alternative services you offer
+- Suggest what's possible (if fiber isn't available, mention cable)
+- Provide contact info for special cases
+
+### Common Rejection Reasons
+
+Track and address frequent issues:
+- **"Service area"**: Expand coverage or clarify boundaries
+- **"Technical limitations"**: Document building requirements
+- **"Duplicate order"**: Improve deduplication process
+- **"Credit check"**: Clarify credit requirements upfront
+
+## Performance Metrics
+
+Monitor these key indicators:
+
+### Acceptance Rate
+
+**Target**: > 85%
+
+Low acceptance rates indicate:
+- Offers listed in wrong service areas
+- Unclear offer descriptions
+- Technical limitations not documented
+
+### Time to Schedule
+
+**Target**: < 5 days from acceptance
+
+Customers expect quick scheduling. Long delays lead to cancellations.
+
+### Completion Rate
+
+**Target**: > 95%
+
+High failure rates suggest:
+- Poor address verification
+- Scheduling issues
+- Technical problems
+
+### Customer Satisfaction
+
+**Target**: 4.5+ stars
+
+Track feedback from resellers about customer experience.
+
+## Automation Strategies
+
+### Auto-Accept Where Possible
+
+For standardized services with clear availability:
+
+```typescript
+async function autoAcceptIfAvailable(order) {
+  const isServiceable = await checkServiceAvailability(order.serviceAddress);
+
+  if (isServiceable && order.offer.category === 'internet') {
+    await updateOrderStatus(order.itemId, {
+      status: 'accepted',
+      providerNotes: 'Order auto-accepted. Customer will be contacted within 24 hours.',
+    });
+
+    await scheduleCustomerContact(order);
+  }
+}
+```
+
+### Integrate with CRM/Scheduling
+
+Connect OfferGrid to your existing systems:
+- Import orders automatically
+- Sync appointment scheduling
+- Update order status from your fulfillment system
+- Generate work orders automatically
+
+### Set Up Webhooks
+
+Receive instant notifications:
+- New orders arrive
+- Reseller cancels order
+- Status updates needed
+
+See [Webhooks](/providers/webhooks) for details.
+
+## Communication Best Practices
+
+<AccordionGroup>
+  <Accordion title="Keep resellers informed">
+    Use `providerNotes` to communicate clearly. Resellers relay updates to customers.
+  </Accordion>
+
+  <Accordion title="Be proactive about issues">
+    If something goes wrong, update status immediately and explain what happened.
+  </Accordion>
+
+  <Accordion title="Provide contact information">
+    Include phone numbers or email for customer questions about their specific order.
+  </Accordion>
+
+  <Accordion title="Use consistent formats">
+    Structure `metadata` the same way every time so resellers can parse it programmatically.
+  </Accordion>
+
+  <Accordion title="Acknowledge special requests">
+    If reseller includes notes (preferred contact times, specific instructions), acknowledge them in your response.
+  </Accordion>
+</AccordionGroup>
+
+## Handling Edge Cases
+
+### Duplicate Orders
+
+If a customer already has service:
+```json
+{
+  "status": "rejected",
+  "providerNotes": "Customer already has active service. Account #12345. Contact customer care to modify existing service."
+}
+```
+
+### Address Outside Service Area
+
+Reject with specific boundary information:
+```json
+{
+  "status": "rejected",
+  "providerNotes": "Address is 0.3 miles outside our service area. We service ZIP codes 94101-94110. Contact us if service area expands."
+}
+```
+
+### Technical Installation Issues
+
+If installation fails after acceptance:
+```json
+{
+  "status": "failed",
+  "providerNotes": "Installation failed. Building requires landlord approval for external wiring. Customer was informed and approved to proceed. Rescheduled for Jan 20 after approvals."
+}
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Order Workflow" icon="arrows-spin" href="/providers/order-workflow">
+    Understanding status progression
+  </Card>
+
+  <Card title="Receiving Orders" icon="inbox" href="/providers/receiving-orders">
+    How orders are received
+  </Card>
+
+  <Card title="API Integration" icon="code" href="/providers/api-integration">
+    Automate your fulfillment workflow
+  </Card>
+
+  <Card title="Webhooks" icon="webhook" href="/providers/webhooks">
+    Real-time order notifications
+  </Card>
+</CardGroup>

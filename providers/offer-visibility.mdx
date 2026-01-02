@@ -1,0 +1,228 @@
+---
+title: 'Offer Visibility & Access Control'
+description: 'Control which resellers can see and order your services'
+icon: 'eye'
+---
+
+## Overview
+
+OfferGrid gives you complete control over who can see and order your service offerings. Choose from public visibility, preferred partners, or selected resellers.
+
+## Visibility Options
+
+### Public Access
+
+**Who can see**: All verified resellers on the platform
+
+**Best for**:
+- Maximizing distribution reach
+- Commoditized services with standard pricing
+- Building brand awareness
+- Growing your partner network
+
+**How to enable**:
+
+Set the visibility to public when creating or updating an offer:
+
+```json
+{
+  "name": "High-Speed Internet",
+  "status": "active",
+  "visibility": "public"
+}
+```
+
+<Tip>
+  Public visibility is the default setting for new offers. Simply publish an offer with `status: "active"` to make it available to all resellers.
+</Tip>
+
+### Preferred Partners
+
+**Who can see**: Only resellers you've added to your preferred partner list
+
+**Best for**:
+- Premium services with special pricing
+- Partners who meet quality standards
+- Maintaining service quality control
+- Relationship-based distribution
+
+**How to enable**:
+
+1. Build your preferred partner list in the dashboard or via API
+2. Set offer visibility to `preferred`:
+
+```json
+{
+  "name": "Premium Service Package",
+  "status": "active",
+  "visibility": "preferred"
+}
+```
+
+All resellers on your preferred list will be able to see and order this offer.
+
+### Selected Resellers
+
+**Who can see**: Specific resellers you choose for this offer
+
+**Best for**:
+- Exclusive partnerships
+- Market testing with select partners
+- Custom or negotiated offerings
+- Regional exclusives
+
+**How to enable**:
+
+Specify which reseller teams can access the offer:
+
+```json
+{
+  "name": "Exclusive Regional Offer",
+  "status": "active",
+  "visibility": "selected",
+  "allowedResellers": [
+    "reseller-team-id-1",
+    "reseller-team-id-2"
+  ]
+}
+```
+
+<Note>
+  Only the resellers with matching team IDs will see this offer in their catalog.
+</Note>
+
+## Managing Partner Lists
+
+### Adding Preferred Partners
+
+Via dashboard:
+1. Go to **Partners** → **Preferred Resellers**
+2. Click **Add Partner**
+3. Search for reseller by name or ID
+4. Click **Add to Preferred List**
+
+Via API:
+```json
+POST /provider/partners/preferred
+{
+  "resellerTeamId": "team-xyz-123"
+}
+```
+
+### Removing Partners
+
+Remove partners from your preferred list:
+
+```json
+DELETE /provider/partners/preferred/{resellerTeamId}
+```
+
+Removed partners will immediately lose access to your preferred-only offers.
+
+## Offer Status vs. Visibility
+
+Understand the difference:
+
+| Status | Visibility | Result |
+|--------|-----------|---------|
+| `draft` | Any | **Hidden** from all resellers |
+| `active` | `public` | **Visible** to all verified resellers |
+| `active` | `preferred` | **Visible** to preferred partners only |
+| `active` | `selected` | **Visible** to specified resellers only |
+| `inactive` | Any | **Hidden** from all resellers |
+| `archived` | Any | **Permanently hidden** |
+
+<Warning>
+  An offer must have `status: "active"` AND appropriate visibility settings to be seen by resellers. Draft and inactive offers are never visible regardless of visibility settings.
+</Warning>
+
+## Use Cases
+
+### Scenario 1: Launch a New Service
+
+**Goal**: Test with trusted partners before broad release
+
+**Strategy**:
+1. Create offer with `visibility: "selected"`
+2. Add 3-5 high-performing resellers
+3. Monitor performance and feedback
+4. Expand to `visibility: "preferred"` after validation
+5. Eventually go `visibility: "public"`
+
+### Scenario 2: Regional Exclusives
+
+**Goal**: Grant exclusive rights to one reseller per region
+
+**Strategy**:
+1. Create separate offers for each region
+2. Use `visibility: "selected"` for each
+3. Assign one reseller per region offer
+4. Track performance and adjust as needed
+
+### Scenario 3: Tiered Partner Program
+
+**Goal**: Reward top performers with exclusive offers
+
+**Strategy**:
+1. Standard offers: `visibility: "public"`
+2. Enhanced offers: `visibility: "preferred"`
+3. Premium offers: `visibility: "selected"` for top tier only
+4. Promote resellers between tiers based on performance
+
+### Scenario 4: Negotiated Pricing
+
+**Goal**: Offer custom pricing to specific partners
+
+**Strategy**:
+1. Create custom offer for partner
+2. Set `visibility: "selected"`
+3. Add only that partner's team ID
+4. Use clear `internalName` for tracking (e.g., "Internet-Partner-XYZ-Special")
+
+## Visibility Best Practices
+
+<AccordionGroup>
+  <Accordion title="Start selective, expand gradually">
+    Launch new offers to a small group first. Validate quality and pricing before opening to broader audiences.
+  </Accordion>
+
+  <Accordion title="Communicate changes clearly">
+    When removing access or changing visibility, notify affected partners in advance to maintain good relationships.
+  </Accordion>
+
+  <Accordion title="Use preferred lists strategically">
+    Build preferred partner lists based on performance metrics: order volume, fulfillment success, customer satisfaction.
+  </Accordion>
+
+  <Accordion title="Track visibility impact">
+    Monitor which visibility settings drive the most orders. Adjust strategy based on data.
+  </Accordion>
+
+  <Accordion title="Document partner requirements">
+    Make clear what resellers need to do to gain access to preferred or selected offers.
+  </Accordion>
+
+  <Accordion title="Review access regularly">
+    Audit your partner lists quarterly. Remove inactive partners, promote high performers.
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Partner Management" icon="handshake" href="/providers/reseller-relationships">
+    Managing reseller partnerships
+  </Card>
+
+  <Card title="Preferred Resellers" icon="star" href="/providers/preferred-resellers">
+    Setting up preferred partner programs
+  </Card>
+
+  <Card title="Creating Offers" icon="plus-circle" href="/providers/creating-offers">
+    Learn about creating offers
+  </Card>
+
+  <Card title="API Reference" icon="code" href="/api-reference/introduction">
+    View complete API documentation
+  </Card>
+</CardGroup>

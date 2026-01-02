@@ -1,0 +1,222 @@
+---
+title: 'Reseller Quick Start'
+description: 'Get up and running as a reseller in minutes'
+icon: 'rocket'
+---
+
+## Reseller Onboarding Checklist
+
+Follow these steps to start selling services through OfferGrid.
+
+### 1. Account Setup
+
+<AccordionGroup>
+  <Accordion title="Create your account" icon="user-plus">
+    1. Visit [offergrid.io](https://offergrid.io)
+    2. Click **Sign Up**
+    3. Choose **Reseller** as your organization type
+    4. Complete your company profile
+  </Accordion>
+
+  <Accordion title="Get verified" icon="badge-check">
+    Complete reseller verification:
+    - Business information
+    - Tax ID (if applicable)
+    - Contact details
+    - Banking information for commission payments
+
+    Verification typically takes 1-2 business days.
+  </Accordion>
+
+  <Accordion title="Generate your API key" icon="key">
+    1. Go to **Settings** → **API Keys**
+    2. Click **Generate New Key**
+    3. Save your key securely
+    4. Store it in environment variables
+  </Accordion>
+</AccordionGroup>
+
+### 2. Explore the Catalog
+
+<AccordionGroup>
+  <Accordion title="Via Dashboard" icon="browser">
+    1. Navigate to **Catalog** in the sidebar
+    2. Browse available services
+    3. Use filters to narrow results:
+       - Category (Internet, TV, Security, etc.)
+       - Price range
+       - ZIP code availability
+       - Search terms
+    4. Click on an offer to see full details
+  </Accordion>
+
+  <Accordion title="Via API" icon="code">
+    ```bash
+    curl -X GET "https://offergrid-api.onrender.com/reseller/catalog?category=internet&zipCode=94102" \
+      -H "x-api-key: YOUR_API_KEY"
+    ```
+
+    See the full [API documentation](/api-reference/introduction) for all available filters.
+  </Accordion>
+</AccordionGroup>
+
+### 3. Place Your First Order
+
+<Steps>
+  <Step title="Select a service">
+    Choose an offer that matches your customer's needs
+  </Step>
+
+  <Step title="Gather customer information">
+    Collect:
+    - Full name
+    - Email address
+    - Phone number
+    - Service address (including unit number if applicable)
+  </Step>
+
+  <Step title="Submit the order">
+    Via dashboard or API:
+
+    ```bash
+    curl -X POST https://offergrid-api.onrender.com/reseller/orders \
+      -H "x-api-key: YOUR_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "items": [{ "offerId": "off-123-abc" }],
+        "customerInfo": {
+          "fullName": "John Doe",
+          "email": "john@example.com",
+          "phone": "+1-555-123-4567"
+        },
+        "serviceAddress": {
+          "street": "123 Main St",
+          "city": "San Francisco",
+          "state": "CA",
+          "zipCode": "94102",
+          "country": "US"
+        },
+        "notes": "Customer prefers afternoon installations"
+      }'
+    ```
+  </Step>
+
+  <Step title="Track the order">
+    Monitor order status in your dashboard or via API polling/webhooks
+  </Step>
+</Steps>
+
+### 4. Track Order Fulfillment
+
+<AccordionGroup>
+  <Accordion title="Via Dashboard" icon="browser">
+    1. Navigate to **Orders** in the sidebar
+    2. View all orders and their current status
+    3. Click on an order for detailed history
+    4. See provider updates and notes
+  </Accordion>
+
+  <Accordion title="Via API" icon="code">
+    ```bash
+    # List all your orders
+    curl -X GET "https://offergrid-api.onrender.com/reseller/orders" \
+      -H "x-api-key: YOUR_API_KEY"
+
+    # Get specific order details
+    curl -X GET "https://offergrid-api.onrender.com/reseller/orders/ORDER_ID" \
+      -H "x-api-key: YOUR_API_KEY"
+    ```
+  </Accordion>
+
+  <Accordion title="Set up webhooks" icon="webhook">
+    Receive real-time notifications when order status changes. See [Webhooks](/resellers/webhooks) for setup.
+  </Accordion>
+</AccordionGroup>
+
+### 5. Get Paid
+
+<Steps>
+  <Step title="Orders complete">
+    Earn commission when services are successfully activated
+  </Step>
+
+  <Step title="Review earnings">
+    Check your commission dashboard for pending and paid amounts
+  </Step>
+
+  <Step title="Receive payment">
+    Payments processed according to your payment schedule (typically monthly)
+  </Step>
+</Steps>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Browse Catalog" icon="magnifying-glass" href="/resellers/browsing-catalog">
+    Learn advanced catalog search and filtering
+  </Card>
+
+  <Card title="Place Orders" icon="file-invoice" href="/resellers/creating-orders">
+    Understand order requirements and best practices
+  </Card>
+
+  <Card title="Track Orders" icon="chart-line" href="/resellers/tracking-orders">
+    Monitor fulfillment and communicate with customers
+  </Card>
+
+  <Card title="API Integration" icon="code" href="/resellers/api-integration">
+    Integrate OfferGrid into your systems
+  </Card>
+</CardGroup>
+
+## Common Questions
+
+<AccordionGroup>
+  <Accordion title="How long does verification take?">
+    Reseller verification typically takes 1-2 business days. You'll receive an email when approved.
+  </Accordion>
+
+  <Accordion title="Can I place orders before verification?">
+    Limited access is available before verification. Full catalog access requires completed verification.
+  </Accordion>
+
+  <Accordion title="How do commissions work?">
+    You earn commission when orders are successfully fulfilled and activated. Commission rates vary by provider and service type.
+  </Accordion>
+
+  <Accordion title="What if a customer cancels?">
+    If a customer cancels before service activation, no commission is earned. Cancel orders through the dashboard or API.
+  </Accordion>
+
+  <Accordion title="Can I order services in multiple states?">
+    Yes! Search the catalog by ZIP code to find services available in any location.
+  </Accordion>
+</AccordionGroup>
+
+## Tips for Success
+
+<AccordionGroup>
+  <Accordion title="Verify addresses carefully">
+    Double-check service addresses before submitting orders. Address errors cause delays and rejections.
+  </Accordion>
+
+  <Accordion title="Set customer expectations">
+    Inform customers about typical installation timelines (usually 3-10 days depending on service).
+  </Accordion>
+
+  <Accordion title="Keep customers informed">
+    Share order status updates with customers as providers move through the fulfillment workflow.
+  </Accordion>
+
+  <Accordion title="Compare multiple offers">
+    Show customers 2-3 options when available to increase conversion and provide value.
+  </Accordion>
+
+  <Accordion title="Focus on high-demand services">
+    Internet and TV are typically highest volume. Security and energy have higher commissions.
+  </Accordion>
+</AccordionGroup>
+
+## Need Help?
+
+Contact us at [support@offergrid.io](mailto:support@offergrid.io) or check out our [API documentation](/api-reference/introduction).

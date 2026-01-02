@@ -1,0 +1,375 @@
+---
+title: 'API Authentication'
+description: 'Detailed guide to authenticating with the OfferGrid API'
+---
+
+## Authentication Method
+
+All OfferGrid API endpoints require authentication using a **Team API Key** passed in the request headers.
+
+## API Key Header
+
+Include your API key in the `x-api-key` header with every request:
+
+```
+x-api-key: YOUR_TEAM_API_KEY
+```
+
+## Example Requests
+
+<CodeGroup>
+
+```bash cURL
+curl -X GET https://offergrid-api.onrender.com/provider/offers \
+  -H "x-api-key: YOUR_TEAM_API_KEY"
+```
+
+```typescript TypeScript/JavaScript
+const response = await fetch('https://offergrid-api.onrender.com/provider/offers', {
+  headers: {
+    'x-api-key': process.env.OFFERGRID_API_KEY,
+  },
+});
+
+const offers = await response.json();
+```
+
+```python Python
+import requests
+import os
+
+response = requests.get(
+  'https://offergrid-api.onrender.com/provider/offers',
+  headers={
+    'x-api-key': os.environ['OFFERGRID_API_KEY']
+  }
+)
+
+offers = response.json()
+```
+
+```ruby Ruby
+require 'net/http'
+require 'json'
+
+uri = URI('https://offergrid-api.onrender.com/provider/offers')
+http = Net::HTTP.new(uri.host, uri.port)
+http.use_ssl = true
+
+request = Net::HTTP::Get.new(uri)
+request['x-api-key'] = ENV['OFFERGRID_API_KEY']
+
+response = http.request(request)
+offers = JSON.parse(response.body)
+```
+
+```go Go
+package main
+
+import (
+    "fmt"
+    "io/ioutil"
+    "net/http"
+    "os"
+)
+
+func main() {
+    client := &http.Client{}
+    req, _ := http.NewRequest("GET", "https://offergrid-api.onrender.com/provider/offers", nil)
+
+    req.Header.Add("x-api-key", os.Getenv("OFFERGRID_API_KEY"))
+
+    resp, _ := client.Do(req)
+    defer resp.Body.Close()
+
+    body, _ := ioutil.ReadAll(resp.Body)
+    fmt.Println(string(body))
+}
+```
+
+```php PHP
+<?php
+
+$apiKey = getenv('OFFERGRID_API_KEY');
+
+$ch = curl_init('https://offergrid-api.onrender.com/provider/offers');
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    'x-api-key: ' . $apiKey
+]);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+$response = curl_exec($ch);
+curl_close($ch);
+
+$offers = json_decode($response, true);
+?>
+```
+
+</CodeGroup>
+
+## Team Roles and Permissions
+
+Your API key's permissions depend on your team's role:
+
+### Provider Teams
+
+Access to **Provider endpoints**:
+
+- `POST /provider/offers` - Create offers
+- `GET /provider/offers` - List your offers
+- `GET /provider/offers/{id}` - Get offer details
+- `PATCH /provider/offers/{id}` - Update offers
+- `DELETE /provider/offers/{id}` - Delete offers
+- `GET /provider/orders` - List orders to fulfill
+- `GET /provider/orders/{itemId}` - Get order details
+- `PATCH /provider/orders/{itemId}/status` - Update order status
+
+### Reseller Teams
+
+Access to **Reseller endpoints**:
+
+- `GET /reseller/catalog` - Browse available offers
+- `GET /reseller/catalog/{id}` - Get offer details
+- `POST /reseller/orders` - Place orders
+- `GET /reseller/orders` - List your orders
+- `GET /reseller/orders/{id}` - Get order details
+- `PATCH /reseller/orders/{id}/cancel` - Cancel orders
+
+### Hybrid Teams
+
+Some teams have both provider AND reseller roles. Hybrid teams can access all endpoints with the same API key.
+
+## Authentication Errors
+
+### 401 Unauthorized
+
+Missing or invalid API key:
+
+```json
+{
+  "statusCode": 401,
+  "message": "Unauthorized - invalid API key",
+  "error": "Unauthorized"
+}
+```
+
+**Common causes**:
+- API key not provided in headers
+- Invalid or revoked API key
+- Incorrect header name (must be `x-api-key`)
+
+**Solution**: Verify API key and header name
+
+### 403 Forbidden
+
+Valid API key but insufficient permissions:
+
+```json
+{
+  "statusCode": 403,
+  "message": "Forbidden - Provider role required",
+  "error": "Forbidden"
+}
+```
+
+**Common causes**:
+- Reseller team trying to access provider endpoints
+- Provider team trying to access reseller endpoints
+- Team role not properly configured
+
+**Solution**: Ensure your team has the appropriate role for the endpoint
+
+## Security Best Practices
+
+### Store Keys Securely
+
+<AccordionGroup>
+  <Accordion title="Use environment variables">
+    **✅ Good**:
+    ```typescript
+    const apiKey = process.env.OFFERGRID_API_KEY;
+    ```
+
+    **❌ Bad**:
+    ```typescript
+    const apiKey = 'pk_live_abc123...'; // Never hardcode!
+    ```
+  </Accordion>
+
+  <Accordion title="Use secrets management">
+    For production, use:
+    - **AWS**: AWS Secrets Manager
+    - **Azure**: Azure Key Vault
+    - **GCP**: Secret Manager
+    - **HashiCorp**: Vault
+    - **1Password**: 1Password CLI
+  </Accordion>
+
+  <Accordion title="Rotate keys regularly">
+    Generate new API keys periodically and revoke old ones:
+    - Every 90 days for active keys
+    - Immediately if compromised
+    - When team members leave
+  </Accordion>
+</AccordionGroup>
+
+### Use HTTPS Only
+
+Always use `https://` endpoints, never `http://`:
+
+```bash
+# ✅ Correct
+https://offergrid-api.onrender.com/provider/offers
+
+# ❌ Wrong - insecure!
+http://offergrid-api.onrender.com/provider/offers
+```
+
+### Don't Expose Keys Client-Side
+
+<Warning>
+  Never include API keys in:
+  - Frontend JavaScript code
+  - Mobile app binaries
+  - Public repositories
+  - Client-side API calls
+</Warning>
+
+Make API calls from your backend server only.
+
+### Separate Keys by Environment
+
+Use different API keys for:
+- **Development**: Testing and development work
+- **Staging**: Pre-production testing
+- **Production**: Live customer transactions
+
+This limits the impact of compromised keys.
+
+## Rate Limiting
+
+OfferGrid enforces rate limits to ensure fair usage:
+
+- **Burst limit**: 100 requests per minute
+- **Sustained limit**: 10,000 requests per hour
+
+### Rate Limit Headers
+
+Check these headers in responses:
+
+```
+X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 95
+X-RateLimit-Reset: 1704211200
+```
+
+### 429 Too Many Requests
+
+If you exceed rate limits:
+
+```json
+{
+  "statusCode": 429,
+  "message": "Too many requests",
+  "error": "Too Many Requests",
+  "retryAfter": 60
+}
+```
+
+**Solution**: Implement exponential backoff and retry logic
+
+```typescript
+async function callWithRetry(apiFunction, maxRetries = 3) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      return await apiFunction();
+    } catch (error) {
+      if (error.status === 429) {
+        const delay = 2 ** i * 1000; // Exponential backoff
+        await sleep(delay);
+        continue;
+      }
+      throw error;
+    }
+  }
+  throw new Error('Max retries exceeded');
+}
+```
+
+## Managing API Keys
+
+### Generating Keys
+
+1. Sign in to [offergrid.io](https://offergrid.io)
+2. Navigate to **Settings** → **API Keys**
+3. Click **Generate New Key**
+4. **Copy immediately** - you won't see it again!
+5. Store securely in environment variables or secrets manager
+
+### Revoking Keys
+
+If a key is compromised:
+
+1. Go to **Settings** → **API Keys**
+2. Find the compromised key
+3. Click **Revoke**
+4. Generate a new key
+5. Update your applications
+
+Revoked keys return `401 Unauthorized` immediately.
+
+### Key Naming
+
+Give keys descriptive names:
+
+- `Production API Key`
+- `Staging Environment`
+- `Development - John's Laptop`
+- `CI/CD Pipeline`
+
+This helps identify which key to revoke if needed.
+
+## Troubleshooting
+
+### "Invalid API key" error
+
+**Check**:
+1. Header name is exactly `x-api-key` (lowercase, with hyphen)
+2. API key was copied correctly (no extra spaces)
+3. API key hasn't been revoked
+4. Request is going to correct base URL
+
+### "Forbidden" error
+
+**Check**:
+1. Team has the correct role (provider or reseller)
+2. Endpoint matches team role
+3. Account is active and verified
+
+### Keys not working in production
+
+**Check**:
+1. Using production API key (not development key)
+2. Environment variables set correctly
+3. Key has proper permissions
+4. Not hitting rate limits
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Provider API" icon="building" href="/api-reference/introduction">
+    Provider endpoint reference
+  </Card>
+
+  <Card title="Reseller API" icon="handshake" href="/api-reference/introduction">
+    Reseller endpoint reference
+  </Card>
+
+  <Card title="Authentication Guide" icon="key" href="/authentication">
+    General authentication overview
+  </Card>
+
+  <Card title="Provider Integration" icon="code" href="/providers/api-integration">
+    Provider integration guide
+  </Card>
+</CardGroup>

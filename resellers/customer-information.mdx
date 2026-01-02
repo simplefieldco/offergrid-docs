@@ -1,0 +1,223 @@
+---
+title: 'Customer Information Requirements'
+description: 'What customer details you need to collect'
+icon: 'user'
+---
+
+## Required Fields
+
+Every order requires these customer details:
+
+### Full Name
+
+**Format**: First and last name
+
+**Examples**:
+- ✅ "John Doe"
+- ✅ "Maria Garcia"
+- ❌ "John" (last name missing)
+- ❌ "J. Doe" (unclear first name)
+
+**Why required**: Provider needs to verify identity and create account
+
+### Email Address
+
+**Format**: Valid email address
+
+**Examples**:
+- ✅ "john@example.com"
+- ✅ "maria.garcia@company.com"
+- ❌ "john@" (incomplete)
+- ❌ "not-an-email" (invalid format)
+
+**Why required**: Provider communications, account setup, billing
+
+<Warning>
+  Use the end customer's email, not your reseller email. Providers may need to contact the customer directly.
+</Warning>
+
+### Phone Number
+
+**Format**: Full phone number with country code
+
+**Examples**:
+- ✅ "+1-555-123-4567"
+- ✅ "(555) 123-4567"
+- ❌ "5551234567" (no formatting)
+- ❌ "123-4567" (incomplete)
+
+**Why required**: Scheduling installation, service activation, support
+
+### Service Address
+
+**Required components**:
+- Street address
+- City
+- State/Province
+- ZIP/Postal code
+- Country
+
+**Important details**:
+- **Unit numbers**: Critical for apartments/condos
+- **Building names**: Helpful for large complexes
+- **Gate codes**: Include in notes if applicable
+- **Access instructions**: Delivery notes, parking info
+
+**Examples**:
+
+✅ **Good**:
+```
+123 Main Street, Apt 4B
+San Francisco, CA 94102
+United States
+```
+
+❌ **Bad**:
+```
+123 Main St
+SF
+```
+(Missing unit number, city abbreviation, no ZIP code)
+
+## Optional But Recommended
+
+### Customer Preferences
+
+Help providers deliver better service:
+
+- **Preferred contact time**: Morning, afternoon, evening
+- **Installation preferences**: Specific dates or time windows
+- **Special requirements**: Accessibility needs, language preferences
+- **Equipment preferences**: Own router vs. provider equipment
+
+### Order Notes
+
+Include helpful context:
+
+```json
+{
+  "notes": "Customer works from home, needs installation scheduled on weekend. Prefers email communication. Building has restricted access Mon-Fri 9-5 only."
+}
+```
+
+### Metadata
+
+Track additional information:
+
+```json
+{
+  "metadata": {
+    "referralSource": "property-listing",
+    "propertyId": "PROP-12345",
+    "moveInDate": "2025-02-01",
+    "unitNumber": "4B",
+    "buildingName": "Sunset Towers"
+  }
+}
+```
+
+## Data Privacy
+
+### Handle Customer Data Responsibly
+
+- **Secure storage**: Encrypt customer data at rest
+- **Secure transmission**: Always use HTTPS
+- **Access control**: Limit who can view customer info
+- **Retention**: Only keep data as long as needed
+- **Compliance**: Follow GDPR, CCPA, and other privacy regulations
+
+### Don't Share Without Permission
+
+- Customer data is for order fulfillment only
+- Don't sell or share customer lists
+- Don't use customer emails for marketing without opt-in
+- Follow all applicable privacy laws
+
+## Validating Customer Data
+
+### Pre-Submission Checks
+
+```typescript
+function validateCustomerInfo(customerInfo) {
+  const errors = [];
+
+  // Name validation
+  if (!customerInfo.fullName || customerInfo.fullName.trim().length < 3) {
+    errors.push('Full name is required');
+  }
+
+  // Email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(customerInfo.email)) {
+    errors.push('Valid email is required');
+  }
+
+  // Phone validation
+  const phoneRegex = /^\+?[\d\s\-\(\)]+$/;
+  if (!phoneRegex.test(customerInfo.phone) || customerInfo.phone.replace(/\D/g, '').length < 10) {
+    errors.push('Valid 10-digit phone number is required');
+  }
+
+  return errors;
+}
+
+function validateServiceAddress(address) {
+  const errors = [];
+
+  if (!address.street) errors.push('Street address is required');
+  if (!address.city) errors.push('City is required');
+  if (!address.state) errors.push('State is required');
+  if (!address.zipCode) errors.push('ZIP code is required');
+  if (!address.country) errors.push('Country is required');
+
+  return errors;
+}
+```
+
+## Common Mistakes to Avoid
+
+<AccordionGroup>
+  <Accordion title="Using your own contact info">
+    **Wrong**: Using reseller email/phone
+
+    **Right**: Using customer's actual contact info
+
+    Why: Providers need to reach the customer directly for scheduling and support.
+  </Accordion>
+
+  <Accordion title="Incomplete addresses">
+    **Wrong**: Missing unit numbers, abbreviated city names
+
+    **Right**: Complete address with all components
+
+    Why: Address errors cause order rejections and delays.
+  </Accordion>
+
+  <Accordion title="Invalid phone numbers">
+    **Wrong**: Local number without area code, international number without country code
+
+    **Right**: Full phone number with proper formatting
+
+    Why: Providers can't schedule without valid contact number.
+  </Accordion>
+
+  <Accordion title="Temporary email addresses">
+    **Wrong**: Using disposable or temporary email addresses
+
+    **Right**: Customer's permanent email address
+
+    Why: Customers need ongoing access for account management and billing.
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Creating Orders" icon="file-invoice" href="/resellers/creating-orders">
+    How to place orders
+  </Card>
+
+  <Card title="Order Submission" icon="paper-plane" href="/resellers/order-submission">
+    What happens after submission
+  </Card>
+</CardGroup>

@@ -1,0 +1,330 @@
+---
+title: 'Webhooks'
+description: 'Receive real-time notifications about order updates'
+icon: 'webhook'
+---
+
+## Overview
+
+Webhooks notify you immediately when order status changes, eliminating the need to poll the API. Get instant updates when providers accept, schedule, or complete orders.
+
+<Note>
+  Webhook functionality may be under development. Check with support for current availability and configuration options.
+</Note>
+
+## How Webhooks Work
+
+1. Configure your endpoint URL
+2. OfferGrid sends POST requests when events occur
+3. Your server processes the event
+4. You respond with 200 OK
+5. OfferGrid retries on failure
+
+## Reseller Webhook Events
+
+### order.status_changed
+
+Triggered when order status updates:
+
+```json
+{
+  "event": "order.status_changed",
+  "orderId": "ord-123-abc",
+  "itemId": "item-456-def",
+  "previousStatus": "pending",
+  "newStatus": "accepted",
+  "providerNotes": "Order accepted. Customer will be contacted within 24 hours.",
+  "timestamp": "2025-01-02T10:30:00Z"
+}
+```
+
+### order.scheduled
+
+Installation/activation scheduled:
+
+```json
+{
+  "event": "order.scheduled",
+  "orderId": "ord-123-abc",
+  "itemId": "item-456-def",
+  "scheduledFor": "2025-01-15T13:00:00Z",
+  "providerNotes": "Installation Tuesday, Jan 15, 1-5 PM",
+  "timestamp": "2025-01-03T09:15:00Z"
+}
+```
+
+### order.completed
+
+Service activated:
+
+```json
+{
+  "event": "order.completed",
+  "orderId": "ord-123-abc",
+  "itemId": "item-456-def",
+  "accountNumber": "12345",
+  "providerNotes": "Service activated successfully",
+  "timestamp": "2025-01-15T16:30:00Z"
+}
+```
+
+### order.rejected
+
+Provider rejected order:
+
+```json
+{
+  "event": "order.rejected",
+  "orderId": "ord-123-abc",
+  "itemId": "item-456-def",
+  "reason": "Service not available at this address",
+  "providerNotes": "Building does not have fiber infrastructure. Cable internet available.",
+  "timestamp": "2025-01-02T14:00:00Z"
+}
+```
+
+## Setting Up Webhooks
+
+<Note>
+  Configuration process may vary. Contact support for current setup instructions.
+</Note>
+
+### Create Webhook Endpoint
+
+```typescript
+import express from 'express';
+
+const app = express();
+app.use(express.json());
+
+app.post('/webhooks/offergrid', async (req, res) => {
+  const { event, orderId, itemId, newStatus, providerNotes } = req.body;
+
+  try {
+    // Verify signature (recommended)
+    if (!verifySignature(req)) {
+      return res.status(401).send('Invalid signature');
+    }
+
+    // Process event
+    await handleWebhook(event, req.body);
+
+    // Respond quickly
+    res.status(200).send('OK');
+  } catch (error) {
+    console.error('Webhook error:', error);
+    res.status(500).send('Internal error');
+  }
+});
+
+async function handleWebhook(event, data) {
+  switch (event) {
+    case 'order.status_changed':
+      await handleStatusChange(data);
+      break;
+
+    case 'order.scheduled':
+      await handleScheduling(data);
+      break;
+
+    case 'order.completed':
+      await handleCompletion(data);
+      break;
+
+    case 'order.rejected':
+      await handleRejection(data);
+      break;
+  }
+}
+```
+
+### Handle Events
+
+```typescript
+async function handleStatusChange(data) {
+  const { orderId, newStatus, providerNotes } = data;
+
+  // Update database
+  await updateOrderStatus(orderId, newStatus);
+
+  // Notify customer
+  if (newStatus === 'accepted') {
+    await emailCustomer(orderId, {
+      subject: 'Your order has been accepted!',
+      message: providerNotes,
+    });
+  }
+
+  if (newStatus === 'scheduled') {
+    await emailCustomer(orderId, {
+      subject: 'Installation scheduled',
+      message: providerNotes,
+    });
+  }
+
+  if (newStatus === 'completed') {
+    await emailCustomer(orderId, {
+      subject: 'Your service is active!',
+      message: providerNotes,
+    });
+  }
+}
+
+async function handleRejection(data) {
+  const { orderId, reason, providerNotes } = data;
+
+  // Update database
+  await updateOrderStatus(orderId, 'rejected');
+
+  // Notify customer with alternatives
+  const alternatives = await findAlternatives(orderId);
+
+  await emailCustomer(orderId, {
+    subject: 'Order update - alternatives available',
+    message: `Unfortunately, your order could not be fulfilled: ${reason}\n\nHere are some alternatives: ${alternatives}`,
+  });
+}
+```
+
+## Verifying Signatures
+
+Always verify webhooks are from OfferGrid:
+
+```typescript
+import crypto from 'crypto';
+
+function verifySignature(req): boolean {
+  const signature = req.headers['x-offergrid-signature'] as string;
+  const timestamp = req.headers['x-offergrid-timestamp'] as string;
+  const payload = JSON.stringify(req.body);
+
+  const signedPayload = `${timestamp}.${payload}`;
+
+  const expectedSignature = crypto
+    .createHmac('sha256', process.env.WEBHOOK_SECRET!)
+    .update(signedPayload)
+    .digest('hex');
+
+  return crypto.timingSafeEqual(
+    Buffer.from(signature),
+    Buffer.from(expectedSignature)
+  );
+}
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Respond immediately">
+    Return 200 OK within 5 seconds. Process events asynchronously.
+  </Accordion>
+
+  <Accordion title="Verify signatures">
+    Always check webhook signatures to prevent fake events.
+  </Accordion>
+
+  <Accordion title="Handle duplicates">
+    You may receive the same event multiple times. Use idempotency keys.
+  </Accordion>
+
+  <Accordion title="Implement retries">
+    If processing fails, queue for retry. Don't lose events.
+  </Accordion>
+
+  <Accordion title="Log all events">
+    Keep webhook logs for debugging and audit trails.
+  </Accordion>
+
+  <Accordion title="Monitor webhook health">
+    Track delivery rates and processing times. Alert on failures.
+  </Accordion>
+</AccordionGroup>
+
+## Testing Webhooks Locally
+
+### Use ngrok
+
+```bash
+# Install ngrok
+npm install -g ngrok
+
+# Start local server
+npm run dev # localhost:3000
+
+# Expose with ngrok
+ngrok http 3000
+
+# Use ngrok URL for webhook config
+# https://abc123.ngrok.io/webhooks/offergrid
+```
+
+### Send Test Events
+
+```bash
+curl -X POST http://localhost:3000/webhooks/offergrid \
+  -H "Content-Type: application/json" \
+  -d '{
+    "event": "order.status_changed",
+    "orderId": "ord-test-123",
+    "newStatus": "accepted",
+    "providerNotes": "Test event"
+  }'
+```
+
+## Common Use Cases
+
+### Auto-Update CRM
+
+```typescript
+async function handleStatusChange(data) {
+  // Update CRM with order status
+  await crmClient.updateDeal(data.orderId, {
+    status: data.newStatus,
+    notes: data.providerNotes,
+  });
+}
+```
+
+### Customer Notifications
+
+```typescript
+async function handleScheduling(data) {
+  // Send SMS reminder
+  await sms.send(data.customerPhone, {
+    message: `Your installation is scheduled for ${formatDate(data.scheduledFor)}. ${data.providerNotes}`,
+  });
+}
+```
+
+### Commission Tracking
+
+```typescript
+async function handleCompletion(data) {
+  // Record commission earned
+  await commissionTracker.record({
+    orderId: data.orderId,
+    amount: calculateCommission(data),
+    earnedAt: new Date(),
+  });
+}
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="API Integration" icon="code" href="/resellers/api-integration">
+    Learn about API integration
+  </Card>
+
+  <Card title="Tracking Orders" icon="chart-line" href="/resellers/tracking-orders">
+    Monitor order status
+  </Card>
+
+  <Card title="API Reference" icon="book" href="/api-reference/introduction">
+    Complete API documentation
+  </Card>
+
+  <Card title="Authentication" icon="key" href="/authentication">
+    API key management
+  </Card>
+</CardGroup>

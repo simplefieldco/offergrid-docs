@@ -1,0 +1,421 @@
+---
+title: 'API Integration Guide'
+description: 'Integrate OfferGrid into your existing systems'
+icon: 'code'
+---
+
+## Overview
+
+The OfferGrid Reseller API lets you browse services, place orders, and track fulfillment programmatically, enabling seamless integration with your existing platforms.
+
+## Getting Started
+
+### 1. Get Your API Key
+
+1. Sign in to [offergrid.io](https://offergrid.io)
+2. Go to **Settings** → **API Keys**
+3. Click **Generate New Key**
+4. Save the key securely
+
+See [Authentication](/authentication) for details.
+
+### 2. Choose Your Integration Approach
+
+**Option A: Real-Time API Calls**
+- Search catalog on-demand
+- Place orders immediately
+- Best for interactive applications
+
+**Option B: Webhook Notifications**
+- Receive order status updates automatically
+- Event-driven architecture
+- Best for automation
+
+**Option C: Scheduled Sync**
+- Cache catalog data locally
+- Refresh periodically
+- Best for high-volume or offline-capable apps
+
+## Common Integration Patterns
+
+### Pattern 1: Property Management Software
+
+Integrate OfferGrid into property management platforms:
+
+```typescript
+// Example: Add "Order Services" button to tenant portal
+async function orderServicesForTenant(tenant, property) {
+  // 1. Get available services for property address
+  const catalog = await fetchCatalog(property.zipCode);
+
+  // 2. Let tenant select services
+  const selectedServices = await showServiceSelection(catalog);
+
+  // 3. Place orders
+  const orders = await Promise.all(
+    selectedServices.map((service) =>
+      placeOrder({
+        offerId: service.id,
+        customerInfo: {
+          fullName: tenant.name,
+          email: tenant.email,
+          phone: tenant.phone,
+        },
+        serviceAddress: property.address,
+      })
+    )
+  );
+
+  // 4. Track and notify tenant
+  await trackOrders(orders);
+}
+```
+
+### Pattern 2: Real Estate Platform
+
+Add service ordering to real estate workflows:
+
+```typescript
+// Example: Pre-close service coordination
+async function coordinateServicesForClosing(property, buyer) {
+  const moveInDate = property.closingDate;
+
+  // Get services available at property
+  const services = await getAvailableServices(property.zipCode);
+
+  // Recommend essential services
+  const recommended = recommendServices(services, property.type);
+
+  // Place orders timed for move-in
+  const orders = await placeOrdersWithTiming(recommended, buyer, moveInDate);
+
+  return orders;
+}
+```
+
+### Pattern 3: Lead Generation Website
+
+Capture and convert service leads:
+
+```typescript
+// Example: Service comparison tool
+async function buildServiceComparison(zipCode, serviceType) {
+  // Fetch available offers
+  const offers = await fetch(
+    `https://offergrid-api.onrender.com/reseller/catalog?zipCode=${zipCode}&category=${serviceType}`,
+    {
+      headers: {
+        'x-api-key': process.env.OFFERGRID_API_KEY,
+      },
+    }
+  );
+
+  const services = await offers.json();
+
+  // Build comparison table
+  const comparison = services.map((s) => ({
+    name: s.name,
+    price: s.monthlyPrice,
+    features: s.keyFeatures,
+    provider: s.providerName,
+  }));
+
+  return comparison;
+}
+
+// When user selects service
+async function captureLeadAndOrder(service, customerInfo) {
+  // Save lead to CRM
+  await saveToCRM(customerInfo);
+
+  // Place order on OfferGrid
+  const order = await placeOrder({
+    offerId: service.id,
+    customerInfo,
+    serviceAddress: customerInfo.address,
+  });
+
+  // Track order in CRM
+  await updateCRMWithOrder(customerInfo.id, order.orderId);
+
+  return order;
+}
+```
+
+## Core API Operations
+
+### Browsing Catalog
+
+```bash
+# Get all services
+GET /reseller/catalog
+
+# Filter by category
+GET /reseller/catalog?category=internet
+
+# Filter by location
+GET /reseller/catalog?zipCode=94102
+
+# Search
+GET /reseller/catalog?search=fiber&minPrice=50&maxPrice=100
+```
+
+### Viewing Offer Details
+
+```bash
+GET /reseller/catalog/{offerId}
+```
+
+Returns complete offer information.
+
+### Placing Orders
+
+```bash
+POST /reseller/orders
+Content-Type: application/json
+
+{
+  "items": [{ "offerId": "off-123-abc" }],
+  "customerInfo": {
+    "fullName": "John Doe",
+    "email": "john@example.com",
+    "phone": "+1-555-123-4567"
+  },
+  "serviceAddress": {
+    "street": "123 Main St",
+    "city": "San Francisco",
+    "state": "CA",
+    "zipCode": "94102",
+    "country": "US"
+  }
+}
+```
+
+### Tracking Orders
+
+```bash
+# List all orders
+GET /reseller/orders
+
+# Get specific order
+GET /reseller/orders/{orderId}
+
+# Filter by status
+GET /reseller/orders?status=scheduled
+```
+
+### Canceling Orders
+
+```bash
+PATCH /reseller/orders/{orderId}/cancel
+Content-Type: application/json
+
+{
+  "reason": "Customer no longer needs service"
+}
+```
+
+## Error Handling
+
+```typescript
+async function safeApiCall(apiFunction, retries = 3) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await apiFunction();
+    } catch (error) {
+      if (error.status === 401) {
+        throw new Error('Invalid API key');
+      }
+
+      if (error.status === 429) {
+        // Rate limited - wait and retry
+        await sleep(2 ** i * 1000);
+        continue;
+      }
+
+      if (error.status >= 500) {
+        // Server error - retry
+        await sleep(2 ** i * 1000);
+        continue;
+      }
+
+      // Client error - don't retry
+      throw error;
+    }
+  }
+
+  throw new Error('Max retries exceeded');
+}
+```
+
+## Caching Strategies
+
+### Catalog Caching
+
+Cache catalog data to reduce API calls:
+
+```typescript
+const catalogCache = {
+  data: null,
+  timestamp: null,
+  ttl: 3600000, // 1 hour
+
+  async get(zipCode) {
+    if (this.isValid()) {
+      return this.data;
+    }
+
+    this.data = await fetchCatalog(zipCode);
+    this.timestamp = Date.now();
+    return this.data;
+  },
+
+  isValid() {
+    return this.data && Date.now() - this.timestamp < this.ttl;
+  },
+};
+```
+
+### Order Status Caching
+
+Cache order status with shorter TTL:
+
+```typescript
+const orderCache = new Map();
+const ORDER_CACHE_TTL = 300000; // 5 minutes
+
+async function getOrderStatus(orderId) {
+  const cached = orderCache.get(orderId);
+
+  if (cached && Date.now() - cached.timestamp < ORDER_CACHE_TTL) {
+    return cached.data;
+  }
+
+  const order = await fetchOrder(orderId);
+  orderCache.set(orderId, {
+    data: order,
+    timestamp: Date.now(),
+  });
+
+  return order;
+}
+```
+
+## Webhooks for Real-Time Updates
+
+Instead of polling, use webhooks:
+
+```typescript
+app.post('/webhooks/offergrid', async (req, res) => {
+  const { event, orderId, status } = req.body;
+
+  if (event === 'order.status_changed') {
+    // Update your database
+    await updateOrderInDatabase(orderId, status);
+
+    // Notify customer
+    await sendCustomerNotification(orderId, status);
+  }
+
+  res.sendStatus(200);
+});
+```
+
+See [Webhooks](/resellers/webhooks) for setup details.
+
+## Rate Limiting
+
+- **Burst**: 100 requests per minute
+- **Sustained**: 10,000 requests per hour
+
+Implement rate limiting:
+
+```typescript
+const RateLimiter = require('bottleneck');
+
+const limiter = new RateLimiter({
+  maxConcurrent: 5,
+  minTime: 600, // 600ms between requests = 100/min
+});
+
+const rateLimitedFetch = limiter.wrap(fetch);
+
+// Use rate-limited fetch
+const response = await rateLimitedFetch(url, options);
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Cache catalog data">
+    Catalog changes infrequently. Cache for 1-6 hours to reduce API calls.
+  </Accordion>
+
+  <Accordion title="Use webhooks for order updates">
+    Don't poll for order status. Use webhooks for real-time notifications.
+  </Accordion>
+
+  <Accordion title="Implement retry logic">
+    Handle temporary failures with exponential backoff. Retry 429 and 5xx errors.
+  </Accordion>
+
+  <Accordion title="Validate data before submitting">
+    Check customer info and addresses locally before making API calls.
+  </Accordion>
+
+  <Accordion title="Store order IDs">
+    Map OfferGrid order IDs to your internal order/lead IDs for tracking.
+  </Accordion>
+
+  <Accordion title="Handle errors gracefully">
+    Provide clear error messages to users. Don't expose technical details.
+  </Accordion>
+</AccordionGroup>
+
+## Testing
+
+### Use Test Mode
+
+Create test orders without real fulfillment:
+
+```json
+{
+  "items": [{ "offerId": "test-offer-id" }],
+  "customerInfo": {
+    "fullName": "Test Customer",
+    "email": "test@example.com",
+    "phone": "+1-555-000-0000"
+  },
+  "metadata": {
+    "test": true
+  }
+}
+```
+
+### Monitor Integration Health
+
+Track:
+- API success rate
+- Average response time
+- Error rates by endpoint
+- Order acceptance rate
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Webhooks" icon="webhook" href="/resellers/webhooks">
+    Set up real-time notifications
+  </Card>
+
+  <Card title="API Reference" icon="book" href="/api-reference/introduction">
+    Complete API documentation
+  </Card>
+
+  <Card title="Authentication" icon="key" href="/authentication">
+    API key management
+  </Card>
+
+  <Card title="Creating Orders" icon="file-invoice" href="/resellers/creating-orders">
+    Order placement guide
+  </Card>
+</CardGroup>

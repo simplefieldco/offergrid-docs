@@ -1,0 +1,194 @@
+---
+title: 'Creating Orders'
+description: 'How to place orders for your customers'
+icon: 'file-invoice'
+---
+
+## Overview
+
+Placing orders on OfferGrid is straightforward. Collect the necessary customer information, select services, and submit. Providers handle fulfillment.
+
+## Required Information
+
+Before placing an order, collect:
+
+### Customer Information
+- Full name
+- Email address
+- Phone number
+
+### Service Address
+- Street address
+- City
+- State
+- ZIP code
+- Country
+- Unit/apartment number (if applicable)
+
+### Optional Details
+- Customer preferences or notes
+- Installation preferences
+- Contact time preferences
+- Special requirements
+
+<Tip>
+  Double-check addresses before submitting. Address errors are the #1 cause of order rejections.
+</Tip>
+
+## Placing an Order
+
+### Via Dashboard
+
+<Steps>
+  <Step title="Select service">
+    Browse catalog and click **Order** on chosen offer
+  </Step>
+
+  <Step title="Enter customer information">
+    Fill in customer name, email, and phone number
+  </Step>
+
+  <Step title="Enter service address">
+    Provide complete service address including unit number
+  </Step>
+
+  <Step title="Add notes (optional)">
+    Include any special requests or customer preferences
+  </Step>
+
+  <Step title="Review and submit">
+    Verify all information is correct, then click **Place Order**
+  </Step>
+</Steps>
+
+### Via API
+
+```bash
+curl -X POST https://offergrid-api.onrender.com/reseller/orders \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "items": [
+      { "offerId": "off-123-abc" }
+    ],
+    "customerInfo": {
+      "fullName": "John Doe",
+      "email": "john@example.com",
+      "phone": "+1-555-123-4567"
+    },
+    "serviceAddress": {
+      "street": "123 Main St",
+      "city": "San Francisco",
+      "state": "CA",
+      "zipCode": "94102",
+      "country": "US"
+    },
+    "notes": "Customer prefers afternoon installations",
+    "metadata": {
+      "referralSource": "property-listing",
+      "unitNumber": "4B"
+    }
+  }'
+```
+
+## Multi-Service Orders
+
+Order multiple services at once:
+
+```json
+{
+  "items": [
+    { "offerId": "internet-offer-id" },
+    { "offerId": "tv-offer-id" },
+    { "offerId": "security-offer-id" }
+  ],
+  "customerInfo": { ... },
+  "serviceAddress": { ... }
+}
+```
+
+Each service becomes a separate order item sent to its respective provider.
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Verify address format">
+    Ensure addresses are complete and properly formatted. Include apartment/unit numbers.
+  </Accordion>
+
+  <Accordion title="Use customer's email">
+    Use the end customer's contact info, not your own. Providers may need to reach them directly.
+  </Accordion>
+
+  <Accordion title="Add helpful notes">
+    Include details that help providers: preferred contact times, gate codes, special access instructions.
+  </Accordion>
+
+  <Accordion title="Confirm before submitting">
+    Review all details with customer before placing order. Changes after submission are difficult.
+  </Accordion>
+
+  <Accordion title="Set customer expectations">
+    Tell customers when to expect contact from providers (usually 24-48 hours).
+  </Accordion>
+</AccordionGroup>
+
+## After Submitting
+
+What happens next:
+
+<Steps>
+  <Step title="Order created">
+    You receive order confirmation with order ID
+  </Step>
+
+  <Step title="Sent to provider">
+    Order automatically routed to the service provider
+  </Step>
+
+  <Step title="Provider reviews">
+    Provider checks serviceability and accepts or rejects (usually within 24 hours)
+  </Step>
+
+  <Step title="Customer contacted">
+    If accepted, provider contacts customer to schedule
+  </Step>
+
+  <Step title="Service installed">
+    Provider completes installation and activates service
+  </Step>
+
+  <Step title="You get paid">
+    Commission earned upon successful activation
+  </Step>
+</Steps>
+
+## Order Confirmations
+
+You'll receive:
+
+**Immediate**: Order ID and confirmation
+**Within 24 hours**: Provider acceptance or rejection
+**Updates**: Status changes throughout fulfillment
+
+Set up webhooks for real-time notifications.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Customer Information" icon="user" href="/resellers/customer-information">
+    Required customer details
+  </Card>
+
+  <Card title="Order Submission" icon="paper-plane" href="/resellers/order-submission">
+    What happens after submission
+  </Card>
+
+  <Card title="Tracking Orders" icon="chart-line" href="/resellers/tracking-orders">
+    Monitor order status
+  </Card>
+
+  <Card title="API Reference" icon="code" href="/api-reference/introduction">
+    Complete API documentation
+  </Card>
+</CardGroup>

@@ -1,97 +1,274 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: 'Welcome to OfferGrid'
+description: 'The B2B marketplace connecting service providers with reseller partners'
 ---
 
-## Setting up
+## What is OfferGrid?
 
-Get your documentation site up and running in minutes.
+OfferGrid is a B2B marketplace platform that streamlines the distribution and sale of essential services. We connect service providers (offering internet, TV, security, energy, and insurance) with reseller partners who help customers find and purchase these services.
 
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
-
-## Make it yours
-
-Design a docs site that looks great and empowers your users.
-
-<Columns cols={2}>
+<CardGroup cols={2}>
   <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
+    title="For Providers"
+    icon="building"
+    href="/providers/index"
   >
-    Edit your docs locally and preview them in real time.
+    Expand your distribution reach through a network of qualified reseller partners. Manage offers, fulfill orders, and grow your business.
   </Card>
+
   <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
+    title="For Resellers"
+    icon="handshake"
+    href="/resellers/index"
   >
-    Customize the design and colors of your site to match your brand.
+    Access services from multiple providers through one platform. Place orders, track fulfillment, and earn commissions.
   </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
+</CardGroup>
+
+## Platform Overview
+
+### For Service Providers
+
+**Publish Service Offerings**
+- Create detailed service offers with pricing and availability
+- Control which resellers can see and order your services
+- Manage multiple service categories from one platform
+
+**Receive Orders Instantly**
+- Get structured order data with all customer information
+- Accept or reject based on serviceability
+- Track fulfillment through automated workflows
+
+**Manage Reseller Partnerships**
+- Build preferred partner lists
+- Create exclusive offers for top performers
+- Monitor partner performance metrics
+
+### For Resellers
+
+**Browse the Catalog**
+- Search services by category, price, and location
+- Compare offerings from multiple providers
+- Filter by ZIP code to show available services
+
+**Place Orders Easily**
+- Submit orders with customer details
+- Orders automatically routed to providers
+- Track status from acceptance through activation
+
+**Earn Commissions**
+- Get paid for successful activations
+- Recurring revenue on active services
+- Volume bonuses for high performers
+
+## Service Categories
+
+<CardGroup cols={3}>
+  <Card title="Internet" icon="wifi">
+    Broadband, fiber, cable, DSL, wireless
   </Card>
+
+  <Card title="Television" icon="tv">
+    Cable TV, satellite, streaming bundles
+  </Card>
+
+  <Card title="Security" icon="shield-halved">
+    Home security, monitoring, smart home
+  </Card>
+
+  <Card title="Energy" icon="bolt">
+    Electricity, natural gas, solar
+  </Card>
+
+  <Card title="Insurance" icon="umbrella">
+    Home, auto, life, health insurance
+  </Card>
+
+  <Card title="Other Services" icon="ellipsis">
+    Additional essential services
+  </Card>
+</CardGroup>
+
+## How It Works
+
+<Steps>
+  <Step title="Providers publish offers">
+    Service providers create detailed offerings with pricing, availability, and specifications
+  </Step>
+
+  <Step title="Resellers browse catalog">
+    Reseller partners search and compare services for their customers
+  </Step>
+
+  <Step title="Orders placed">
+    Resellers submit orders with customer information and service addresses
+  </Step>
+
+  <Step title="Providers fulfill">
+    Providers accept orders, schedule installations, and activate services
+  </Step>
+
+  <Step title="Everyone wins">
+    Customers get services, providers expand reach, resellers earn commissions
+  </Step>
+</Steps>
+
+## Key Benefits
+
+<AccordionGroup>
+  <Accordion title="For Providers: Expanded Distribution" icon="chart-line">
+    Reach more customers through established reseller networks without building individual partnerships or custom integrations.
+  </Accordion>
+
+  <Accordion title="For Resellers: One Platform, Multiple Services" icon="grid">
+    Access services from many providers through a single API or dashboard. Reduce complexity and administrative overhead.
+  </Accordion>
+
+  <Accordion title="For Everyone: Automated Workflows" icon="gears">
+    Order routing, status updates, and notifications happen automatically. Less manual coordination, more time for growth.
+  </Accordion>
+
+  <Accordion title="Real-Time Visibility" icon="eye">
+    Track orders, fulfillment status, and partner performance in real-time. Make data-driven decisions.
+  </Accordion>
+</AccordionGroup>
+
+## Use Cases
+
+### Property Management
+Property managers source and order internet, TV, security, and other services for new tenants or property improvements across their portfolios.
+
+### Real Estate
+Real estate agents offer value-added services to homebuyers by coordinating essential service setup before move-in dates.
+
+### Corporate Facilities
+Facilities managers find and order services for new office locations, expansions, or vendor changes across multiple properties.
+
+### Service Aggregation
+Companies that bundle or resell services integrate multiple providers without managing individual API integrations.
+
+## Get Started
+
+<CardGroup cols={2}>
   <Card
-    title="API documentation"
-    icon="terminal"
+    title="Quick Start"
+    icon="rocket"
+    href="/quickstart"
+  >
+    Get up and running in minutes with our quick start guide
+  </Card>
+
+  <Card
+    title="How It Works"
+    icon="diagram-project"
+    href="/how-it-works"
+  >
+    Understand the platform workflow and key concepts
+  </Card>
+
+  <Card
+    title="API Reference"
+    icon="code"
     href="/api-reference/introduction"
   >
-    Auto-generate API documentation from OpenAPI specifications.
+    Explore the complete API documentation
   </Card>
-</Columns>
 
-## Create beautiful pages
+  <Card
+    title="Authentication"
+    icon="key"
+    href="/authentication"
+  >
+    Learn how to authenticate with the API
+  </Card>
+</CardGroup>
 
-Everything you need to create world-class documentation.
+## Choose Your Path
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+<Tabs>
+  <Tab title="I'm a Provider">
+    **Service providers** offer essential services (internet, TV, security, energy, insurance) and want to expand distribution.
 
-## Need inspiration?
+    <CardGroup cols={2}>
+      <Card
+        title="Provider Overview"
+        icon="building"
+        href="/providers/index"
+      >
+        Learn about provider benefits and features
+      </Card>
+
+      <Card
+        title="Provider Quick Start"
+        icon="rocket"
+        href="/providers/quickstart"
+      >
+        Get started as a provider
+      </Card>
+
+      <Card
+        title="Creating Offers"
+        icon="plus-circle"
+        href="/providers/creating-offers"
+      >
+        Publish your first service offering
+      </Card>
+
+      <Card
+        title="Provider API"
+        icon="code"
+        href="/providers/api-integration"
+      >
+        Integrate with your systems
+      </Card>
+    </CardGroup>
+  </Tab>
+
+  <Tab title="I'm a Reseller">
+    **Resellers** help customers find and purchase services through property management, real estate, facilities management, or service aggregation.
+
+    <CardGroup cols={2}>
+      <Card
+        title="Reseller Overview"
+        icon="handshake"
+        href="/resellers/index"
+      >
+        Learn about reseller benefits and features
+      </Card>
+
+      <Card
+        title="Reseller Quick Start"
+        icon="rocket"
+        href="/resellers/quickstart"
+      >
+        Get started as a reseller
+      </Card>
+
+      <Card
+        title="Browsing Catalog"
+        icon="magnifying-glass"
+        href="/resellers/browsing-catalog"
+      >
+        Find services for your customers
+      </Card>
+
+      <Card
+        title="Reseller API"
+        icon="code"
+        href="/resellers/api-integration"
+      >
+        Integrate with your systems
+      </Card>
+    </CardGroup>
+  </Tab>
+</Tabs>
+
+## Need Help?
 
 <Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
+  title="Contact Support"
+  icon="envelope"
+  href="mailto:support@offergrid.io"
 >
-  Browse our showcase of exceptional documentation sites.
+  Have questions? Our team is here to help at support@offergrid.io
 </Card>

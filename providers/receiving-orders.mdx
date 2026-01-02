@@ -1,0 +1,261 @@
+---
+title: 'Receiving Orders'
+description: 'Understanding incoming orders from resellers'
+icon: 'inbox'
+---
+
+## Overview
+
+When resellers place orders for your services, you'll receive structured order data with all the information needed to fulfill the customer request.
+
+## How You Receive Orders
+
+### Dashboard Notifications
+
+View all incoming orders in your provider dashboard:
+
+1. Navigate to **Orders** in the sidebar
+2. See new orders marked as `pending` or `submitted_to_provider`
+3. Click on an order to view full details
+4. Take action (accept, reject, schedule)
+
+### API Polling
+
+Retrieve orders programmatically:
+
+```bash
+curl -X GET "https://offergrid-api.onrender.com/provider/orders?status=pending" \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
+Filter by status to get orders that need attention:
+- `pending` - Newly submitted, awaiting acceptance
+- `submitted_to_provider` - Sent to your fulfillment system
+- `accepted` - Accepted and in progress
+
+### Webhook Notifications
+
+Set up webhooks to receive real-time notifications when new orders arrive:
+
+```json
+{
+  "event": "order.created",
+  "orderId": "ord-123-abc",
+  "itemId": "item-456-def",
+  "offerId": "off-789-ghi",
+  "timestamp": "2025-01-02T10:00:00Z"
+}
+```
+
+See [Webhooks](/providers/webhooks) for setup instructions.
+
+## Order Structure
+
+Each order contains:
+
+### Order Item Details
+
+```json
+{
+  "id": "item-456-def",
+  "orderId": "ord-123-abc",
+  "offerId": "off-789-ghi",
+  "offerName": "High-Speed Internet 1000 Mbps",
+  "status": "pending",
+  "createdAt": "2025-01-02T10:00:00Z"
+}
+```
+
+### Customer Information
+
+```json
+{
+  "customerInfo": {
+    "fullName": "John Doe",
+    "email": "john@example.com",
+    "phone": "+1-555-123-4567"
+  }
+}
+```
+
+### Service Address
+
+```json
+{
+  "serviceAddress": {
+    "street": "123 Main St",
+    "city": "San Francisco",
+    "state": "CA",
+    "zipCode": "94102",
+    "country": "US"
+  }
+}
+```
+
+### Additional Details
+
+```json
+{
+  "notes": "Customer prefers afternoon installations",
+  "metadata": {
+    "referralSource": "property-listing",
+    "unitNumber": "4B",
+    "moveInDate": "2025-01-15"
+  }
+}
+```
+
+## Order Workflow
+
+When you receive an order:
+
+<Steps>
+  <Step title="Review Order Details">
+    Check customer information, service address, and any special notes from the reseller
+  </Step>
+
+  <Step title="Verify Availability">
+    Confirm that the service is available at the customer's location
+  </Step>
+
+  <Step title="Accept or Reject">
+    Update the order status to `accepted` if you can fulfill it, or `rejected` if not
+  </Step>
+
+  <Step title="Schedule Fulfillment">
+    If accepted, schedule installation or activation and update status to `scheduled`
+  </Step>
+
+  <Step title="Complete Installation">
+    After successful installation, update status to `completed` or `active`
+  </Step>
+</Steps>
+
+## Accepting Orders
+
+To accept an order:
+
+```bash
+curl -X PATCH "https://offergrid-api.onrender.com/provider/orders/ITEM_ID/status" \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "accepted",
+    "providerNotes": "Order accepted. We will contact customer to schedule installation."
+  }'
+```
+
+<Tip>
+  Include helpful notes in `providerNotes` to keep resellers informed about next steps.
+</Tip>
+
+## Rejecting Orders
+
+If you cannot fulfill an order, reject it with a clear reason:
+
+```bash
+curl -X PATCH "https://offergrid-api.onrender.com/provider/orders/ITEM_ID/status" \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "rejected",
+    "providerNotes": "Service not available at this address. Building does not have fiber infrastructure."
+  }'
+```
+
+Common rejection reasons:
+- Service not available at location
+- Address outside service area
+- Technical limitations (building wiring, line of sight)
+- Credit check failure
+- Duplicate order
+
+## Order Filtering
+
+Filter orders by status to focus on what needs attention:
+
+```bash
+# Get pending orders
+GET /provider/orders?status=pending
+
+# Get orders needing scheduling
+GET /provider/orders?status=accepted
+
+# Get active services
+GET /provider/orders?status=active
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Respond quickly">
+    Accept or reject orders within 24 hours. Fast response times improve reseller satisfaction and customer experience.
+  </Accordion>
+
+  <Accordion title="Verify addresses carefully">
+    Double-check service addresses before accepting. Address errors are a common cause of fulfillment delays.
+  </Accordion>
+
+  <Accordion title="Provide clear rejection reasons">
+    When rejecting, explain why so resellers can address issues or find alternative solutions.
+  </Accordion>
+
+  <Accordion title="Include next steps">
+    When accepting, tell resellers what happens next and when to expect follow-up.
+  </Accordion>
+
+  <Accordion title="Set up automated notifications">
+    Use webhooks to integrate orders into your fulfillment systems automatically.
+  </Accordion>
+
+  <Accordion title="Monitor order volume">
+    Track incoming order patterns to forecast capacity needs and staffing.
+  </Accordion>
+</AccordionGroup>
+
+## Automated Order Processing
+
+For high-volume providers, consider automating order acceptance:
+
+```typescript
+// Example: Auto-accept if service is available
+async function processNewOrder(orderId: string) {
+  const order = await getOrderDetails(orderId);
+  const available = await checkServiceAvailability(order.serviceAddress);
+
+  if (available) {
+    await updateOrderStatus(orderId, {
+      status: 'accepted',
+      providerNotes: 'Auto-accepted. Customer will be contacted within 24 hours.',
+    });
+
+    // Trigger internal fulfillment workflow
+    await scheduleInstallation(order);
+  } else {
+    await updateOrderStatus(orderId, {
+      status: 'rejected',
+      providerNotes: 'Service not available at this location.',
+    });
+  }
+}
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Order Workflow" icon="arrows-spin" href="/providers/order-workflow">
+    Understanding the complete fulfillment lifecycle
+  </Card>
+
+  <Card title="Fulfillment Best Practices" icon="check-double" href="/providers/fulfillment-best-practices">
+    Tips for smooth order fulfillment
+  </Card>
+
+  <Card title="Webhooks" icon="webhook" href="/providers/webhooks">
+    Set up real-time order notifications
+  </Card>
+
+  <Card title="API Reference" icon="code" href="/api-reference/introduction">
+    View complete API documentation
+  </Card>
+</CardGroup>

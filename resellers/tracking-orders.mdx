@@ -1,0 +1,222 @@
+---
+title: 'Tracking Orders'
+description: 'Monitor order status and communicate with customers'
+icon: 'chart-line'
+---
+
+## Overview
+
+Track order progress in real-time from submission through activation. Keep customers informed and address issues proactively.
+
+## Viewing Orders
+
+### Via Dashboard
+
+1. Navigate to **Orders** in the sidebar
+2. View all orders with current status
+3. Filter by status, date, or customer
+4. Click an order for full details and history
+
+### Via API
+
+```bash
+# List all orders
+GET /reseller/orders
+
+# Get specific order
+GET /reseller/orders/{orderId}
+
+# Filter by status
+GET /reseller/orders?status=scheduled
+```
+
+## Order Status Meanings
+
+### Active States
+
+**`pending`** - Just submitted, awaiting provider review
+
+**`submitted_to_provider`** - Sent to provider, awaiting acceptance
+
+**`accepted`** - Provider confirmed they can fulfill, will schedule
+
+**`scheduled`** - Installation/activation date set
+
+**`in_progress`** - Installation happening now
+
+**`completed`** - Installation finished
+
+**`active`** - Service live and operational
+
+### Inactive States
+
+**`rejected`** - Provider cannot fulfill
+
+**`cancelled`** - Order cancelled by you or customer
+
+**`failed`** - Installation attempted but failed
+
+## Order Timeline
+
+View complete history:
+
+```json
+{
+  "orderId": "ord-123-abc",
+  "status": "scheduled",
+  "history": [
+    {
+      "status": "pending",
+      "timestamp": "2025-01-02T10:00:00Z",
+      "notes": "Order created"
+    },
+    {
+      "status": "submitted_to_provider",
+      "timestamp": "2025-01-02T10:00:05Z",
+      "notes": "Sent to provider"
+    },
+    {
+      "status": "accepted",
+      "timestamp": "2025-01-02T14:30:00Z",
+      "providerNotes": "Order accepted. Customer will be contacted within 24 hours."
+    },
+    {
+      "status": "scheduled",
+      "timestamp": "2025-01-03T09:15:00Z",
+      "providerNotes": "Installation scheduled for Tuesday, Jan 15, 1-5 PM",
+      "scheduledFor": "2025-01-15T13:00:00Z"
+    }
+  ]
+}
+```
+
+## Provider Notes
+
+Providers include helpful updates:
+
+**At acceptance**:
+```
+"Order accepted. Customer will be contacted within 24 hours to schedule installation."
+```
+
+**At scheduling**:
+```
+"Installation scheduled for Tuesday, Jan 15, 1-5 PM. Technician Mike Johnson will call 30 minutes before arrival."
+```
+
+**At completion**:
+```
+"Service activated successfully. Customer account #12345. All services tested and operational."
+```
+
+Relay these updates to your customers!
+
+## Communicating with Customers
+
+### At Submission
+"I've submitted your order for [Service Name]. The provider will review and contact you within 24-48 hours to schedule installation."
+
+### After Acceptance
+"Good news! [Provider] accepted your order and will call you today or tomorrow to schedule installation."
+
+### After Scheduling
+"Your installation is scheduled for [Date], [Time Window]. The technician will call 30 minutes before arrival. Here's the confirmation: [Details]"
+
+### After Completion
+"Your service is now active! Account #[Number]. Contact [Provider] at [Phone] if you have any questions."
+
+## Monitoring Multiple Orders
+
+### Dashboard Views
+
+- **All Orders**: Complete order history
+- **Pending**: Awaiting provider response
+- **In Progress**: Currently being fulfilled
+- **Completed**: Successfully activated
+
+### Setting Up Alerts
+
+Get notified when:
+- Order accepted by provider
+- Order rejected (investigate and contact customer)
+- Installation scheduled (share details with customer)
+- Order completed (confirm customer satisfaction)
+
+## Handling Delays
+
+### If No Response After 48 Hours
+
+1. Check order status in dashboard
+2. Contact provider support if still pending
+3. Update customer: "Checking on your order status, will update shortly"
+4. Follow up daily until resolved
+
+### If Installation Delayed
+
+1. Check provider notes for explanation
+2. Contact provider for updated timeline
+3. Inform customer immediately
+4. Offer alternatives if significant delay
+
+## Order Metrics
+
+Track your performance:
+
+### Volume Metrics
+- Total orders submitted
+- Orders per week/month
+- Growth trends
+
+### Quality Metrics
+- Acceptance rate (target: >85%)
+- Cancellation rate (target: <10%)
+- Time to completion (average days)
+
+### Revenue Metrics
+- Commission earned
+- Average order value
+- Repeat customer rate
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Check orders daily">
+    Review new status updates every morning. Respond to changes promptly.
+  </Accordion>
+
+  <Accordion title="Proactive communication">
+    Update customers before they ask. Share provider notes as soon as you receive them.
+  </Accordion>
+
+  <Accordion title="Save confirmation details">
+    Store account numbers, confirmation codes, and technician info for customer reference.
+  </Accordion>
+
+  <Accordion title="Follow up after activation">
+    Contact customers 1-2 days after installation to ensure satisfaction.
+  </Accordion>
+
+  <Accordion title="Track problem orders">
+    Note any issues or delays. Use patterns to improve future orders.
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Order Lifecycle" icon="arrows-spin" href="/resellers/order-lifecycle">
+    Understanding order progression
+  </Card>
+
+  <Card title="Cancellations" icon="ban" href="/resellers/cancellations">
+    How to cancel orders
+  </Card>
+
+  <Card title="Webhooks" icon="webhook" href="/resellers/webhooks">
+    Automate order tracking
+  </Card>
+
+  <Card title="API Reference" icon="code" href="/api-reference/introduction">
+    Complete API documentation
+  </Card>
+</CardGroup>

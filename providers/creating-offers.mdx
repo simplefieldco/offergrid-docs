@@ -1,0 +1,196 @@
+---
+title: 'Creating Offers'
+description: 'Learn how to create and publish service offerings'
+icon: 'plus-circle'
+---
+
+## Overview
+
+Service offers are the foundation of your presence on OfferGrid. Each offer represents a specific service package you're making available to reseller partners.
+
+## Creating an Offer
+
+### Via Dashboard
+
+<Steps>
+  <Step title="Navigate to Offers">
+    Click **Offers** in the sidebar menu
+  </Step>
+
+  <Step title="Create New Offer">
+    Click the **Create New Offer** button
+  </Step>
+
+  <Step title="Fill in Basic Information">
+    - **Name**: Customer-facing name (e.g., "High-Speed Internet 1000 Mbps")
+    - **Internal Name**: Your internal tracking name (optional)
+    - **Category**: Select the service type
+    - **SKU**: Your product SKU for inventory tracking
+  </Step>
+
+  <Step title="Add Pricing">
+    - **Pricing Type**: Fixed, Variable, Tiered, or Custom
+    - **Monthly Price**: Base recurring price
+    - **Setup Fees**: One-time fees (optional)
+    - **Additional Costs**: Equipment, installation, etc.
+  </Step>
+
+  <Step title="Add Service Details">
+    Include service-specific information based on category (speeds, channels, coverage, etc.)
+  </Step>
+
+  <Step title="Configure Marketing Content">
+    - **Description**: Detailed service description
+    - **Marketing Headline**: Catchy tagline
+    - **Key Features**: Bullet points of main benefits
+    - **Images**: Service photos or graphics
+  </Step>
+
+  <Step title="Set Availability">
+    - **Service Area**: ZIP codes or regions where available
+    - **Status**: Draft (hidden) or Active (visible to resellers)
+  </Step>
+
+  <Step title="Save or Publish">
+    **Save as Draft** to review later, or **Publish** to make available immediately
+  </Step>
+</Steps>
+
+### Via API
+
+Create an offer programmatically using the Provider API:
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://offergrid-api.onrender.com/provider/offers \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "High-Speed Internet 1000 Mbps",
+    "category": "internet",
+    "status": "active",
+    "monthlyPrice": 59.99,
+    "description": "Blazing fast fiber internet with unlimited data",
+    "keyFeatures": [
+      "1000 Mbps download",
+      "1000 Mbps upload",
+      "Unlimited data",
+      "No contract required"
+    ],
+    "serviceSpecificData": {
+      "downloadSpeed": "1000 Mbps",
+      "uploadSpeed": "1000 Mbps",
+      "connectionType": "Fiber"
+    }
+  }'
+```
+
+```typescript TypeScript
+const response = await fetch('https://offergrid-api.onrender.com/provider/offers', {
+  method: 'POST',
+  headers: {
+    'x-api-key': process.env.OFFERGRID_API_KEY,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    name: 'High-Speed Internet 1000 Mbps',
+    category: 'internet',
+    status: 'active',
+    monthlyPrice: 59.99,
+    description: 'Blazing fast fiber internet with unlimited data',
+    keyFeatures: [
+      '1000 Mbps download',
+      '1000 Mbps upload',
+      'Unlimited data',
+      'No contract required',
+    ],
+    serviceSpecificData: {
+      downloadSpeed: '1000 Mbps',
+      uploadSpeed: '1000 Mbps',
+      connectionType: 'Fiber',
+    },
+  }),
+});
+
+const offer = await response.json();
+```
+
+</CodeGroup>
+
+## Required Fields
+
+At minimum, you must provide:
+
+- `name` - Public-facing offer name
+
+## Recommended Fields
+
+For better reseller engagement, include:
+
+- `description` - Detailed service description
+- `category` - Service type (internet, TV, security, etc.)
+- `monthlyPrice` - Pricing information
+- `keyFeatures` - Bullet points of main benefits
+- `serviceSpecificData` - Category-specific details
+
+## Offer Status
+
+Control offer visibility with the `status` field:
+
+- **`draft`**: Hidden from resellers, visible only to you
+- **`active`**: Visible to authorized resellers, available for ordering
+- **`inactive`**: Temporarily hidden but can be reactivated
+- **`archived`**: Permanently archived, not available
+
+<Tip>
+  Start with `draft` status while you finalize details, then switch to `active` when ready.
+</Tip>
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Use clear, descriptive names">
+    Make it easy for resellers to understand what you're offering at a glance. Include key details like speeds, sizes, or service levels in the name.
+  </Accordion>
+
+  <Accordion title="Provide detailed specifications">
+    The more details you provide, the easier it is for resellers to match your services to customer needs. Include technical specs, coverage details, and any limitations.
+  </Accordion>
+
+  <Accordion title="Add compelling marketing content">
+    Help resellers sell your services by providing marketing headlines, key benefits, and high-quality images.
+  </Accordion>
+
+  <Accordion title="Keep pricing transparent">
+    Include all fees and costs upfront. Clearly indicate recurring vs. one-time charges.
+  </Accordion>
+
+  <Accordion title="Update availability regularly">
+    Keep service area and availability information current to avoid order failures.
+  </Accordion>
+
+  <Accordion title="Test before activating">
+    Create offers in `draft` status first, review all details, and test the order flow before making them `active`.
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Service Categories" icon="tags" href="/providers/offer-categories">
+    Learn about category-specific requirements
+  </Card>
+
+  <Card title="Pricing Strategies" icon="dollar-sign" href="/providers/pricing-strategies">
+    Understand different pricing models
+  </Card>
+
+  <Card title="Offer Visibility" icon="eye" href="/providers/offer-visibility">
+    Control who can see your offers
+  </Card>
+
+  <Card title="API Reference" icon="code" href="/api-reference/introduction">
+    View complete API documentation
+  </Card>
+</CardGroup>

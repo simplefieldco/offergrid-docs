@@ -1,0 +1,304 @@
+---
+title: 'Order Lifecycle & Status Updates'
+description: 'Understanding order status progression and when to update'
+icon: 'arrows-spin'
+---
+
+## Order Status Lifecycle
+
+Orders progress through several states from initial submission to completion:
+
+```
+pending → submitted_to_provider → accepted → scheduled →
+in_progress → completed → active
+```
+
+Or, if something goes wrong:
+
+```
+pending → rejected
+accepted → cancelled
+in_progress → failed
+```
+
+## Status Definitions
+
+### Initial States
+
+**`pending`**
+- Order just created by reseller
+- Awaiting provider review
+- **Your action**: Review and accept or reject
+
+**`submitted_to_provider`**
+- Order sent to your fulfillment system
+- Awaiting confirmation
+- **Your action**: Confirm receipt and accept or reject
+
+### Accepted States
+
+**`accepted`**
+- You've confirmed you can fulfill the order
+- Customer info verified
+- **Your action**: Schedule installation or activation
+
+**`scheduled`**
+- Installation or activation date set
+- Customer has been contacted
+- **Your action**: Complete the installation on schedule
+
+**`in_progress`**
+- Installation or setup actively happening
+- Technician on-site or service being activated
+- **Your action**: Complete installation and activate service
+
+### Completion States
+
+**`completed`**
+- Installation finished successfully
+- Service activated and tested
+- **Your action**: None (terminal state)
+
+**`active`**
+- Service is live and active
+- Ongoing service subscription
+- **Your action**: Monitor for issues, provide support
+
+### Failure States
+
+**`rejected`**
+- Unable to fulfill the order
+- Clear reason provided
+- **Your action**: None (terminal state)
+
+**`cancelled`**
+- Order cancelled after acceptance
+- By provider or reseller request
+- **Your action**: None (terminal state)
+
+**`failed`**
+- Installation or activation failed
+- Technical or logistical issues
+- **Your action**: Document reason, coordinate with reseller on resolution
+
+## Updating Order Status
+
+### Via API
+
+Update order item status with a PATCH request:
+
+```bash
+curl -X PATCH "https://offergrid-api.onrender.com/provider/orders/ITEM_ID/status" \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "scheduled",
+    "providerNotes": "Installation scheduled for Tuesday, Jan 15 between 1-5 PM",
+    "scheduledFor": "2025-01-15T13:00:00Z",
+    "metadata": {
+      "technicianName": "Mike Johnson",
+      "technicianPhone": "+1-555-999-8888"
+    }
+  }'
+```
+
+### Required vs. Optional Fields
+
+**Always required**:
+- `status` - The new status value
+
+**Recommended**:
+- `providerNotes` - Human-readable update for reseller
+- `scheduledFor` - When status is `scheduled`
+- `metadata` - Additional context (tracking numbers, appointment details)
+
+## Common Workflows
+
+### Workflow 1: Standard Installation
+
+<Steps>
+  <Step title="Order received">
+    Status: `pending`
+
+    Action: Review order details and verify service availability
+  </Step>
+
+  <Step title="Accept order">
+    Status: `accepted`
+
+    ```json
+    {
+      "status": "accepted",
+      "providerNotes": "Order accepted. Customer will be contacted within 24 hours to schedule installation."
+    }
+    ```
+  </Step>
+
+  <Step title="Schedule installation">
+    Status: `scheduled`
+
+    ```json
+    {
+      "status": "scheduled",
+      "providerNotes": "Installation scheduled for Jan 15, 1-5 PM",
+      "scheduledFor": "2025-01-15T13:00:00Z",
+      "metadata": {
+        "appointmentWindow": "1-5 PM",
+        "technicianName": "Mike Johnson"
+      }
+    }
+    ```
+  </Step>
+
+  <Step title="Begin installation">
+    Status: `in_progress`
+
+    ```json
+    {
+      "status": "in_progress",
+      "providerNotes": "Technician on-site, installation in progress"
+    }
+    ```
+  </Step>
+
+  <Step title="Complete installation">
+    Status: `completed` or `active`
+
+    ```json
+    {
+      "status": "active",
+      "providerNotes": "Service activated successfully. Customer account #12345",
+      "metadata": {
+        "accountNumber": "12345",
+        "activationDate": "2025-01-15"
+      }
+    }
+    ```
+  </Step>
+</Steps>
+
+### Workflow 2: Instant Activation (No Installation)
+
+For services that don't require physical installation:
+
+```
+pending → accepted → active
+```
+
+Example (insurance, some energy plans):
+
+```json
+{
+  "status": "active",
+  "providerNotes": "Policy activated immediately. Policy #POL-98765",
+  "metadata": {
+    "policyNumber": "POL-98765",
+    "effectiveDate": "2025-01-02"
+  }
+}
+```
+
+### Workflow 3: Rejection
+
+If you cannot fulfill:
+
+```json
+{
+  "status": "rejected",
+  "providerNotes": "Service not available at this address. Building does not have fiber infrastructure. Cable internet available as alternative."
+}
+```
+
+### Workflow 4: Cancellation After Acceptance
+
+If an accepted order must be cancelled:
+
+```json
+{
+  "status": "cancelled",
+  "providerNotes": "Customer requested cancellation before installation. No fees charged."
+}
+```
+
+## Status Update Best Practices
+
+<AccordionGroup>
+  <Accordion title="Update status promptly">
+    Update within hours of status changes, not days. Real-time updates build trust with resellers.
+  </Accordion>
+
+  <Accordion title="Always include notes">
+    Use `providerNotes` to explain what happened and what happens next. Resellers relay this info to customers.
+  </Accordion>
+
+  <Accordion title="Provide scheduling details">
+    When setting status to `scheduled`, always include the date/time and appointment window.
+  </Accordion>
+
+  <Accordion title="Include reference numbers">
+    Add account numbers, work order IDs, or tracking numbers in `metadata` for future reference.
+  </Accordion>
+
+  <Accordion title="Be specific about failures">
+    If rejecting or failing an order, clearly explain why and suggest alternatives when possible.
+  </Accordion>
+
+  <Accordion title="Use metadata for automation">
+    Structure `metadata` consistently so resellers can parse and use it programmatically.
+  </Accordion>
+</AccordionGroup>
+
+## Automated Status Updates
+
+Integrate OfferGrid status updates into your existing systems:
+
+```typescript
+// Example: Update status when your CRM changes
+async function onInstallationScheduled(workOrder) {
+  await fetch(`https://offergrid-api.onrender.com/provider/orders/${workOrder.offergridItemId}/status`, {
+    method: 'PATCH',
+    headers: {
+      'x-api-key': process.env.OFFERGRID_API_KEY,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      status: 'scheduled',
+      providerNotes: `Installation scheduled for ${workOrder.appointmentDate}`,
+      scheduledFor: workOrder.appointmentDate,
+      metadata: {
+        workOrderId: workOrder.id,
+        technicianId: workOrder.technicianId,
+      },
+    }),
+  });
+}
+```
+
+## Monitoring Order Progress
+
+Track order metrics in your dashboard:
+
+- **Acceptance rate**: % of orders accepted vs. rejected
+- **Time to accept**: How quickly you respond to new orders
+- **Completion rate**: % of accepted orders successfully completed
+- **Average fulfillment time**: Days from acceptance to activation
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Receiving Orders" icon="inbox" href="/providers/receiving-orders">
+    Understanding incoming orders
+  </Card>
+
+  <Card title="Fulfillment Best Practices" icon="check-double" href="/providers/fulfillment-best-practices">
+    Tips for smooth fulfillment
+  </Card>
+
+  <Card title="API Reference" icon="code" href="/api-reference/introduction">
+    View complete API documentation
+  </Card>
+
+  <Card title="Webhooks" icon="webhook" href="/providers/webhooks">
+    Automate status updates
+  </Card>
+</CardGroup>

@@ -1,0 +1,169 @@
+---
+title: 'Provider Quick Start'
+description: 'Get up and running as a service provider in minutes'
+icon: 'rocket'
+---
+
+## Provider Onboarding Checklist
+
+Follow these steps to start distributing your services through OfferGrid.
+
+### 1. Account Setup
+
+<AccordionGroup>
+  <Accordion title="Create your account" icon="user-plus">
+    1. Visit [offergrid.io](https://offergrid.io)
+    2. Click **Sign Up**
+    3. Choose **Provider** as your organization type
+    4. Complete your company profile
+  </Accordion>
+
+  <Accordion title="Verify your organization" icon="badge-check">
+    Provide business verification details to gain access to the provider platform. This typically takes 1-2 business days.
+  </Accordion>
+
+  <Accordion title="Generate your API key" icon="key">
+    1. Go to **Settings** → **API Keys**
+    2. Click **Generate New Key**
+    3. Save your key securely (you won't see it again!)
+    4. Store it in your environment variables
+  </Accordion>
+</AccordionGroup>
+
+### 2. Create Your First Offer
+
+<AccordionGroup>
+  <Accordion title="Via Dashboard" icon="browser">
+    1. Navigate to **Offers** in the sidebar
+    2. Click **Create New Offer**
+    3. Fill in offer details:
+       - Name and category
+       - Pricing and billing
+       - Service specifications
+       - Availability zones
+    4. Add marketing content and images
+    5. Click **Save Draft** or **Publish**
+  </Accordion>
+
+  <Accordion title="Via API" icon="code">
+    ```bash
+    curl -X POST https://offergrid-api.onrender.com/provider/offers \
+      -H "x-api-key: YOUR_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "name": "High-Speed Internet 1000 Mbps",
+        "category": "internet",
+        "status": "active",
+        "monthlyPrice": 59.99,
+        "description": "Lightning-fast fiber internet",
+        "serviceSpecificData": {
+          "downloadSpeed": "1000 Mbps",
+          "uploadSpeed": "1000 Mbps",
+          "connectionType": "Fiber"
+        }
+      }'
+    ```
+
+    See the full [API documentation](/api-reference/introduction) for all available fields.
+  </Accordion>
+</AccordionGroup>
+
+### 3. Configure Offer Visibility
+
+<Steps>
+  <Step title="Choose visibility setting">
+    Decide who can see your offer:
+    - **All Resellers**: Public visibility (default)
+    - **Preferred Partners**: Only approved resellers
+    - **Selected Resellers**: Specific partners
+  </Step>
+
+  <Step title="Set up partner list (optional)">
+    If using Preferred or Selected visibility, add approved resellers to your partner list.
+  </Step>
+
+  <Step title="Publish your offer">
+    Once you're ready, change the status to `active` to make it available to resellers.
+  </Step>
+</Steps>
+
+### 4. Set Up Order Fulfillment
+
+<AccordionGroup>
+  <Accordion title="Configure submission settings" icon="cog">
+    Define how you want to receive order details:
+    - Submission URL (webhook endpoint)
+    - Required form fields
+    - Custom metadata fields
+  </Accordion>
+
+  <Accordion title="Test the order flow" icon="flask">
+    Create a test order to ensure your fulfillment system is ready:
+    1. Use a test reseller account or ask support
+    2. Place a test order
+    3. Verify you receive the order data
+    4. Practice updating order status
+  </Accordion>
+
+  <Accordion title="Set up notifications" icon="bell">
+    Configure how you want to be notified about new orders:
+    - Email notifications
+    - Webhook callbacks
+    - Dashboard alerts
+  </Accordion>
+</AccordionGroup>
+
+### 5. Start Receiving Orders
+
+<Check>
+  You're all set! Resellers can now browse your offers and place orders.
+</Check>
+
+Monitor your dashboard for:
+- New order notifications
+- Order status by fulfillment stage
+- Partner activity and performance
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Manage Offers" icon="tags" href="/providers/creating-offers">
+    Learn about creating and managing service offerings
+  </Card>
+
+  <Card title="Fulfill Orders" icon="check-circle" href="/providers/receiving-orders">
+    Understand the order fulfillment workflow
+  </Card>
+
+  <Card title="Partner Management" icon="handshake" href="/providers/reseller-relationships">
+    Control reseller access to your offers
+  </Card>
+
+  <Card title="API Integration" icon="code" href="/providers/api-integration">
+    Integrate with your existing systems
+  </Card>
+</CardGroup>
+
+## Common Questions
+
+<AccordionGroup>
+  <Accordion title="How long does verification take?">
+    Business verification typically takes 1-2 business days. You'll receive an email when your account is approved.
+  </Accordion>
+
+  <Accordion title="Can I test before going live?">
+    Yes! Create offers with `draft` status and work with our support team to test the order flow before making offers public.
+  </Accordion>
+
+  <Accordion title="What if I need to update an offer?">
+    You can update offers anytime via the dashboard or API. Changes take effect immediately.
+  </Accordion>
+
+  <Accordion title="How do I handle orders in multiple regions?">
+    Use the `availableZipCodes` or `serviceArea` fields to specify where each offer is available.
+  </Accordion>
+</AccordionGroup>
+
+## Need Help?
+
+Contact us at [support@offergrid.io](mailto:support@offergrid.io) or check out our [API documentation](/api-reference/introduction).

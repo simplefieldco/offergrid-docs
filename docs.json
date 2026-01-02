@@ -11,41 +11,110 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Overview",
         "groups": [
           {
-            "group": "Getting started",
-            "pages": ["index", "quickstart", "development"]
-          },
+            "group": "Getting Started",
+            "pages": ["index", "quickstart", "how-it-works", "authentication"]
+          }
+        ]
+      },
+      {
+        "tab": "For Providers",
+        "groups": [
           {
-            "group": "Customization",
-            "pages": ["essentials/settings", "essentials/navigation"]
-          },
-          {
-            "group": "Writing content",
+            "group": "Getting Started",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
+              "providers/index",
+              "providers/quickstart"
             ]
           },
           {
-            "group": "AI tools",
+            "group": "Managing Offers",
             "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "providers/creating-offers",
+              "providers/offer-categories",
+              "providers/pricing-strategies",
+              "providers/offer-visibility"
+            ]
+          },
+          {
+            "group": "Order Fulfillment",
+            "pages": [
+              "providers/receiving-orders",
+              "providers/order-workflow",
+              "providers/fulfillment-best-practices"
+            ]
+          },
+          {
+            "group": "Partner Management",
+            "pages": [
+              "providers/reseller-relationships",
+              "providers/preferred-resellers"
+            ]
+          },
+          {
+            "group": "Integration",
+            "pages": [
+              "providers/api-integration",
+              "providers/webhooks"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "For Resellers",
         "groups": [
           {
-            "group": "API documentation",
-            "pages": ["api-reference/introduction"]
+            "group": "Getting Started",
+            "pages": [
+              "resellers/index",
+              "resellers/quickstart"
+            ]
+          },
+          {
+            "group": "Finding Offers",
+            "pages": [
+              "resellers/browsing-catalog",
+              "resellers/service-categories",
+              "resellers/comparing-offers",
+              "resellers/checking-availability"
+            ]
+          },
+          {
+            "group": "Placing Orders",
+            "pages": [
+              "resellers/creating-orders",
+              "resellers/customer-information",
+              "resellers/order-submission"
+            ]
+          },
+          {
+            "group": "Managing Orders",
+            "pages": [
+              "resellers/tracking-orders",
+              "resellers/order-lifecycle",
+              "resellers/cancellations"
+            ]
+          },
+          {
+            "group": "Integration",
+            "pages": [
+              "resellers/api-integration",
+              "resellers/webhooks"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "API Documentation",
+            "pages": [
+              "api-reference/introduction",
+              "api-reference/authentication"
+            ]
           },
           {
             "group": "Provider API",
@@ -67,14 +136,14 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
+          "anchor": "Dashboard",
+          "href": "https://offergrid.io",
+          "icon": "grid"
         },
         {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "anchor": "Support",
+          "href": "mailto:support@offergrid.io",
+          "icon": "envelope"
         }
       ]
     }
@@ -87,13 +156,13 @@
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "mailto:support@offergrid.io"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Sign In",
+      "href": "https://offergrid.io"
     }
   },
   "contextual": {
@@ -110,9 +179,9 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "x": "https://x.com/offergrid",
+      "github": "https://github.com/simplefieldco/offergrid",
+      "linkedin": "https://linkedin.com/company/offergrid"
     }
   }
 }

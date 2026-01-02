@@ -1,0 +1,176 @@
+---
+title: 'Browsing the Catalog'
+description: 'Search and filter available service offerings'
+icon: 'magnifying-glass'
+---
+
+## Overview
+
+The OfferGrid catalog contains services from multiple providers across all major categories. Use powerful search and filtering to find exactly what your customers need.
+
+## Accessing the Catalog
+
+### Via Dashboard
+
+1. Navigate to **Catalog** in the sidebar
+2. Browse all available offers
+3. Use filters to narrow results
+4. Click on any offer for full details
+
+### Via API
+
+Retrieve offers programmatically:
+
+```bash
+curl -X GET "https://offergrid-api.onrender.com/reseller/catalog" \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
+## Search and Filter Options
+
+### Filter by Category
+
+```bash
+GET /reseller/catalog?category=internet
+```
+
+Available categories:
+- `internet` - Broadband, fiber, cable, wireless
+- `television` - Cable, satellite, streaming
+- `security` - Home security, monitoring
+- `energy` - Electricity, gas, solar
+- `insurance` - Home, auto, life, health
+- `other` - Additional services
+
+### Filter by Price Range
+
+```bash
+GET /reseller/catalog?minPrice=50&maxPrice=100
+```
+
+Find offers within your customer's budget.
+
+### Filter by ZIP Code
+
+```bash
+GET /reseller/catalog?zipCode=94102
+```
+
+Only show offers available at specific locations.
+
+<Tip>
+  Always filter by ZIP code before presenting options to customers. Not all services are available everywhere.
+</Tip>
+
+### Search by Keywords
+
+```bash
+GET /reseller/catalog?search=fiber+internet
+```
+
+Search across:
+- Offer names
+- Descriptions
+- Marketing headlines
+- Key features
+
+### Combine Filters
+
+Use multiple filters together:
+
+```bash
+GET /reseller/catalog?category=internet&minPrice=0&maxPrice=100&zipCode=94102&search=fiber
+```
+
+## Offer Details
+
+Each offer includes:
+
+- **Basic Information**: Name, category, provider
+- **Pricing**: Monthly price, setup fees, pricing type
+- **Description**: Detailed service description
+- **Key Features**: Bullet points of main benefits
+- **Service Specifications**: Category-specific details (speeds, channels, etc.)
+- **Availability**: Service area, ZIP codes
+- **Marketing Content**: Headlines, images
+
+### Viewing Full Details
+
+Click an offer or fetch via API:
+
+```bash
+GET /reseller/catalog/{offerId}
+```
+
+Returns complete offer information including all fields.
+
+## Sorting Results
+
+Sort offers by:
+- **Price**: Low to high or high to low
+- **Name**: Alphabetical
+- **Recently Added**: Newest offers first
+- **Provider**: Group by service provider
+
+Example:
+
+```bash
+GET /reseller/catalog?category=internet&sortBy=price&sortOrder=asc
+```
+
+## Understanding Offer Visibility
+
+You can only see offers that:
+- Are marked as `active` by the provider
+- Are either:
+  - Public (visible to all resellers)
+  - Preferred-only AND you're on that provider's preferred list
+  - Selected resellers AND you're specifically added
+
+<Note>
+  Your access level affects which offers you see. Build strong relationships with providers to gain access to exclusive offerings.
+</Note>
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Always check availability first">
+    Filter by ZIP code before showing options to customers. Avoid disappointment from unavailable services.
+  </Accordion>
+
+  <Accordion title="Compare multiple providers">
+    Show customers 2-3 options when available. Competition drives better decisions.
+  </Accordion>
+
+  <Accordion title="Read full descriptions">
+    Don't rely on name and price alone. Review service details, fees, and limitations.
+  </Accordion>
+
+  <Accordion title="Save frequent searches">
+    If you serve specific ZIP codes or categories, save common search filters.
+  </Accordion>
+
+  <Accordion title="Check for new offers regularly">
+    Providers add new services frequently. Review the catalog weekly for fresh options.
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Service Categories" icon="layer-group" href="/resellers/service-categories">
+    Understanding service types
+  </Card>
+
+  <Card title="Comparing Offers" icon="scale-balanced" href="/resellers/comparing-offers">
+    How to evaluate and compare offers
+  </Card>
+
+  <Card title="Checking Availability" icon="location-dot" href="/resellers/checking-availability">
+    Verify service availability
+  </Card>
+
+  <Card title="API Reference" icon="code" href="/api-reference/introduction">
+    Complete API documentation
+  </Card>
+</CardGroup>

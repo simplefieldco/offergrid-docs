@@ -1,0 +1,261 @@
+---
+title: 'Canceling Orders'
+description: 'How to cancel orders when needed'
+icon: 'ban'
+---
+
+## When to Cancel
+
+Common reasons:
+
+- Customer changed mind
+- Customer found alternative
+- Address error cannot be fixed
+- Customer no longer needs service
+- Service not available (should be rejected by provider instead)
+
+## Cancellation Windows
+
+### Before Provider Acceptance
+
+**Status**: `pending` or `submitted_to_provider`
+
+**Result**: Easy cancellation, no issues
+
+**Impact**: No commission earned, no penalties
+
+### After Provider Acceptance
+
+**Status**: `accepted`, `scheduled`, or `in_progress`
+
+**Result**: May have complications
+
+**Impact**: Depends on provider policy and stage
+
+<Warning>
+  Once a provider has scheduled or started installation, cancellation may result in fees or impact your account standing.
+</Warning>
+
+## How to Cancel
+
+### Via Dashboard
+
+<Steps>
+  <Step title="Go to Orders">
+    Navigate to **Orders** in the sidebar
+  </Step>
+
+  <Step title="Find the order">
+    Locate the order you want to cancel
+  </Step>
+
+  <Step title="Click Cancel">
+    Click **Cancel Order** button
+  </Step>
+
+  <Step title="Provide reason">
+    Enter cancellation reason (helps improve service)
+  </Step>
+
+  <Step title="Confirm">
+    Confirm cancellation
+  </Step>
+</Steps>
+
+### Via API
+
+```bash
+PATCH /reseller/orders/{orderId}/cancel
+```
+
+Example:
+
+```bash
+curl -X PATCH "https://offergrid-api.onrender.com/reseller/orders/ord-123-abc/cancel" \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "reason": "Customer found alternative service"
+  }'
+```
+
+## What Happens After Cancellation
+
+<Steps>
+  <Step title="Order marked cancelled">
+    Status changes to `cancelled`
+  </Step>
+
+  <Step title="Provider notified">
+    Provider receives cancellation notice
+  </Step>
+
+  <Step title="Installation stopped">
+    If scheduled, appointment is cancelled
+  </Step>
+
+  <Step title="No commission">
+    Order does not earn commission
+  </Step>
+</Steps>
+
+## Cancellation Policies by Stage
+
+### Pending/Submitted
+
+**Can cancel**: Yes, always
+
+**Process**: Immediate
+
+**Fees**: None
+
+**Impact**: None
+
+### Accepted (Not Yet Scheduled)
+
+**Can cancel**: Yes
+
+**Process**: Usually immediate
+
+**Fees**: Typically none
+
+**Impact**: Minimal, but track cancellation rate
+
+### Scheduled (Appointment Set)
+
+**Can cancel**: Yes, but may have consequences
+
+**Process**: Contact provider
+
+**Fees**: Possible cancellation fee depending on notice
+
+**Impact**: May affect your account rating
+
+<Tip>
+  Cancel at least 24-48 hours before scheduled appointment to avoid fees.
+</Tip>
+
+### In Progress (Technician On-Site)
+
+**Can cancel**: Not recommended
+
+**Process**: Contact provider immediately
+
+**Fees**: Likely charges for time/materials
+
+**Impact**: Negative impact on account
+
+### Completed/Active
+
+**Can cancel**: No (must cancel service through provider)
+
+**Process**: Customer works directly with provider
+
+**Fees**: Per customer's service agreement
+
+**Impact**: Commission may be clawed back
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Confirm before ordering">
+    Verify customer commitment before submitting order. Reduce unnecessary cancellations.
+  </Accordion>
+
+  <Accordion title="Cancel early">
+    If cancellation is needed, do it as soon as possible. Don't wait.
+  </Accordion>
+
+  <Accordion title="Provide clear reasons">
+    Help providers improve by explaining why customers cancel.
+  </Accordion>
+
+  <Accordion title="Communicate with provider">
+    For scheduled or in-progress orders, call provider support before canceling through system.
+  </Accordion>
+
+  <Accordion title="Track cancellation patterns">
+    If you have high cancellation rates, identify and address root causes.
+  </Accordion>
+
+  <Accordion title="Offer alternatives">
+    Before canceling, see if a different service would work for the customer.
+  </Accordion>
+</AccordionGroup>
+
+## Reducing Cancellations
+
+### Pre-Order Checklist
+
+Before submitting:
+
+- [ ] Customer confirmed interest
+- [ ] Budget approved
+- [ ] Service address verified
+- [ ] Availability checked
+- [ ] Customer understands timeline
+- [ ] Alternative options discussed
+
+### Setting Expectations
+
+Tell customers:
+- Typical installation timeline
+- What to expect from provider
+- Cancellation policies and potential fees
+- Installation requirements (home access, etc.)
+
+### Following Up
+
+After order submission:
+- Confirm with customer
+- Share acceptance notification
+- Remind about scheduled appointments
+- Be available for questions
+
+## Impact on Your Account
+
+### Metrics Tracked
+
+Providers may monitor:
+- **Cancellation rate**: % of orders you cancel
+- **Late cancellations**: Cancellations after scheduling
+- **Reason patterns**: Common cancellation reasons
+
+### Consequences
+
+High cancellation rates may result in:
+- Account review
+- Loss of preferred partner status
+- Reduced access to exclusive offers
+- Commission adjustments
+
+**Target**: Keep cancellation rate below 10%
+
+## When Customer Wants to Cancel Service
+
+If a customer wants to cancel **after service activation**:
+
+1. **Don't use OfferGrid**: Active service cancellation goes through provider
+2. **Direct customer to provider**: Give them provider's customer service contact
+3. **Not your responsibility**: Once active, it's between customer and provider
+4. **Commission implications**: Some providers may claw back commission for early cancellations
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Tracking Orders" icon="chart-line" href="/resellers/tracking-orders">
+    Monitor order status
+  </Card>
+
+  <Card title="Order Lifecycle" icon="arrows-spin" href="/resellers/order-lifecycle">
+    Understanding order progression
+  </Card>
+
+  <Card title="Creating Orders" icon="file-invoice" href="/resellers/creating-orders">
+    Best practices for placing orders
+  </Card>
+
+  <Card title="API Reference" icon="code" href="/api-reference/introduction">
+    Complete API documentation
+  </Card>
+</CardGroup>

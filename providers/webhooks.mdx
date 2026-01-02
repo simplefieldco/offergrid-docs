@@ -1,0 +1,435 @@
+---
+title: 'Webhooks'
+description: 'Receive real-time notifications about orders and events'
+icon: 'webhook'
+---
+
+## Overview
+
+Webhooks let you receive real-time HTTP notifications when events occur in OfferGrid, enabling immediate response to new orders and status changes.
+
+<Note>
+  Webhook functionality may be under development. Check with support for current availability and configuration options.
+</Note>
+
+## How Webhooks Work
+
+1. **Configure endpoint**: Tell OfferGrid where to send notifications
+2. **Event occurs**: New order, status change, etc.
+3. **OfferGrid sends POST**: HTTP POST to your endpoint
+4. **You respond**: Process the event and return 200 OK
+5. **Retry on failure**: OfferGrid retries if your endpoint is down
+
+## Webhook Events
+
+### Provider Events
+
+**`order.created`**
+- New order received from reseller
+- Includes order ID and item ID
+- Action: Review and accept/reject
+
+**`order.cancelled`**
+- Reseller cancelled an order
+- Includes order ID and reason
+- Action: Stop fulfillment if in progress
+
+**`offer.ordered`** (Future)
+- One of your offers was ordered
+- Includes offer ID and order details
+
+## Setting Up Webhooks
+
+<Note>
+  Configuration process may vary. Contact support for current webhook setup instructions.
+</Note>
+
+### Step 1: Create an Endpoint
+
+Build an HTTPS endpoint to receive webhooks:
+
+```typescript
+import express from 'express';
+
+const app = express();
+app.use(express.json());
+
+app.post('/webhooks/offergrid', async (req, res) => {
+  const { event, data } = req.body;
+
+  try {
+    // Verify webhook signature (recommended)
+    if (!verifySignature(req)) {
+      return res.status(401).send('Invalid signature');
+    }
+
+    // Process the event
+    await handleWebhook(event, data);
+
+    // Always respond quickly
+    res.status(200).send('OK');
+  } catch (error) {
+    console.error('Webhook error:', error);
+    res.status(500).send('Internal error');
+  }
+});
+
+async function handleWebhook(event, data) {
+  switch (event) {
+    case 'order.created':
+      await processNewOrder(data.itemId);
+      break;
+
+    case 'order.cancelled':
+      await handleOrderCancellation(data.orderId);
+      break;
+
+    default:
+      console.log(`Unhandled event: ${event}`);
+  }
+}
+```
+
+### Step 2: Configure in Dashboard
+
+1. Go to **Settings** → **Webhooks**
+2. Click **Add Webhook Endpoint**
+3. Enter your endpoint URL
+4. Select which events to receive
+5. Save the webhook secret for signature verification
+
+### Step 3: Test the Connection
+
+Send a test event to verify your endpoint works:
+
+1. Click **Send Test Event** in dashboard
+2. Check your endpoint received the event
+3. Verify signature validation works
+4. Confirm proper error handling
+
+## Webhook Payload Structure
+
+### Common Format
+
+All webhooks follow this structure:
+
+```json
+{
+  "id": "evt_abc123",
+  "event": "order.created",
+  "timestamp": "2025-01-02T10:00:00Z",
+  "data": {
+    // Event-specific data
+  }
+}
+```
+
+### order.created Payload
+
+```json
+{
+  "id": "evt_abc123",
+  "event": "order.created",
+  "timestamp": "2025-01-02T10:00:00Z",
+  "data": {
+    "orderId": "ord-123-abc",
+    "itemId": "item-456-def",
+    "offerId": "off-789-ghi",
+    "offerName": "High-Speed Internet 1000 Mbps",
+    "resellerTeamId": "team-xyz-789",
+    "serviceAddress": {
+      "street": "123 Main St",
+      "city": "San Francisco",
+      "state": "CA",
+      "zipCode": "94102"
+    }
+  }
+}
+```
+
+### order.cancelled Payload
+
+```json
+{
+  "id": "evt_def456",
+  "event": "order.cancelled",
+  "timestamp": "2025-01-02T11:00:00Z",
+  "data": {
+    "orderId": "ord-123-abc",
+    "itemId": "item-456-def",
+    "reason": "Customer changed mind",
+    "cancelledBy": "reseller"
+  }
+}
+```
+
+## Verifying Webhook Signatures
+
+Always verify webhooks are from OfferGrid:
+
+```typescript
+import crypto from 'crypto';
+
+function verifySignature(req: Request): boolean {
+  const signature = req.headers['x-offergrid-signature'] as string;
+  const timestamp = req.headers['x-offergrid-timestamp'] as string;
+  const payload = JSON.stringify(req.body);
+
+  // Reconstruct the signed payload
+  const signedPayload = `${timestamp}.${payload}`;
+
+  // Compute expected signature
+  const expectedSignature = crypto
+    .createHmac('sha256', process.env.WEBHOOK_SECRET!)
+    .update(signedPayload)
+    .digest('hex');
+
+  // Compare signatures (timing-safe comparison)
+  return crypto.timingSafeEqual(
+    Buffer.from(signature),
+    Buffer.from(expectedSignature)
+  );
+}
+```
+
+<Warning>
+  Always verify signatures in production! This prevents attackers from sending fake webhooks to your endpoint.
+</Warning>
+
+## Handling Webhooks
+
+### Respond Quickly
+
+Return 200 OK within 5 seconds:
+
+```typescript
+// ✅ Good - Respond immediately, process async
+app.post('/webhooks/offergrid', async (req, res) => {
+  const { event, data } = req.body;
+
+  // Verify signature
+  if (!verifySignature(req)) {
+    return res.status(401).send('Invalid signature');
+  }
+
+  // Queue for processing
+  await enqueueWebhook(event, data);
+
+  // Respond immediately
+  res.status(200).send('OK');
+});
+
+// Process in background
+async function enqueueWebhook(event, data) {
+  await queue.add('process-webhook', { event, data });
+}
+```
+
+```typescript
+// ❌ Bad - Slow processing blocks response
+app.post('/webhooks/offergrid', async (req, res) => {
+  const { event, data } = req.body;
+
+  // This might take 30 seconds!
+  await processNewOrder(data.itemId);
+  await updateDatabase();
+  await sendEmails();
+
+  res.status(200).send('OK'); // Too slow!
+});
+```
+
+### Handle Duplicates
+
+You might receive the same webhook multiple times:
+
+```typescript
+async function handleWebhook(event, data) {
+  const eventId = data.eventId || generateEventId(event, data);
+
+  // Check if already processed
+  const exists = await db.events.exists(eventId);
+  if (exists) {
+    console.log(`Event ${eventId} already processed`);
+    return;
+  }
+
+  // Process the event
+  await processEvent(event, data);
+
+  // Mark as processed
+  await db.events.create({ id: eventId, processedAt: new Date() });
+}
+```
+
+### Implement Retry Logic
+
+Handle temporary failures gracefully:
+
+```typescript
+async function processWebhookEvent(event, data) {
+  const maxRetries = 3;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      await processEvent(event, data);
+      return; // Success!
+    } catch (error) {
+      if (attempt === maxRetries) {
+        // Failed all retries - log and alert
+        await logFailedWebhook(event, data, error);
+        await alertOps('Webhook processing failed', { event, error });
+        throw error;
+      }
+
+      // Wait before retry (exponential backoff)
+      await sleep(2 ** attempt * 1000);
+    }
+  }
+}
+```
+
+## Testing Webhooks Locally
+
+### Use ngrok for Local Development
+
+```bash
+# Install ngrok
+npm install -g ngrok
+
+# Start your local server
+npm run dev # Runs on localhost:3000
+
+# Expose locally with ngrok
+ngrok http 3000
+
+# Use the ngrok URL in OfferGrid webhook config
+# https://abc123.ngrok.io/webhooks/offergrid
+```
+
+### Send Test Events
+
+```bash
+# Manually send test events to your endpoint
+curl -X POST http://localhost:3000/webhooks/offergrid \
+  -H "Content-Type: application/json" \
+  -H "x-offergrid-signature: test-signature" \
+  -H "x-offergrid-timestamp: $(date +%s)" \
+  -d '{
+    "id": "evt_test_123",
+    "event": "order.created",
+    "timestamp": "2025-01-02T10:00:00Z",
+    "data": {
+      "orderId": "ord-test-123",
+      "itemId": "item-test-456",
+      "offerId": "off-test-789"
+    }
+  }'
+```
+
+## Monitoring Webhooks
+
+### Log All Events
+
+```typescript
+async function handleWebhook(event, data) {
+  const startTime = Date.now();
+
+  try {
+    await processEvent(event, data);
+
+    logger.info('Webhook processed successfully', {
+      event,
+      eventId: data.eventId,
+      duration: Date.now() - startTime,
+    });
+  } catch (error) {
+    logger.error('Webhook processing failed', {
+      event,
+      eventId: data.eventId,
+      error: error.message,
+      duration: Date.now() - startTime,
+    });
+
+    throw error;
+  }
+}
+```
+
+### Track Metrics
+
+Monitor:
+- **Delivery rate**: % of webhooks successfully received
+- **Processing time**: How long processing takes
+- **Error rate**: % of webhooks that fail processing
+- **Retry rate**: % of webhooks that need retries
+
+## Webhook Best Practices
+
+<AccordionGroup>
+  <Accordion title="Always verify signatures">
+    Never process webhooks without verifying the signature. This prevents fake events.
+  </Accordion>
+
+  <Accordion title="Respond within 5 seconds">
+    Return 200 OK quickly. Process the event asynchronously in a background job.
+  </Accordion>
+
+  <Accordion title="Handle duplicates">
+    Use idempotency keys to prevent processing the same event twice.
+  </Accordion>
+
+  <Accordion title="Implement retry logic">
+    Handle temporary failures with exponential backoff. Alert on repeated failures.
+  </Accordion>
+
+  <Accordion title="Log everything">
+    Log all webhook events for debugging and auditing. Include timestamps and durations.
+  </Accordion>
+
+  <Accordion title="Monitor webhook health">
+    Track delivery rates, error rates, and processing times. Alert on anomalies.
+  </Accordion>
+</AccordionGroup>
+
+## Troubleshooting
+
+### Webhooks Not Arriving
+
+1. **Check endpoint URL**: Ensure URL is correct and publicly accessible
+2. **Verify HTTPS**: Endpoint must use HTTPS (not HTTP)
+3. **Check firewall**: Ensure your firewall allows incoming requests
+4. **Review webhook settings**: Confirm webhook is enabled for the event type
+
+### Signature Verification Fails
+
+1. **Check webhook secret**: Ensure using correct secret from dashboard
+2. **Verify timestamp**: Check `x-offergrid-timestamp` header exists
+3. **Payload format**: Ensure payload is parsed as raw JSON string
+
+### Webhooks Timing Out
+
+1. **Respond faster**: Return 200 OK before processing
+2. **Use async processing**: Queue events for background processing
+3. **Optimize database**: Ensure database queries are fast
+4. **Scale horizontally**: Add more webhook processing workers
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="API Integration" icon="code" href="/providers/api-integration">
+    Learn about API integration patterns
+  </Card>
+
+  <Card title="Receiving Orders" icon="inbox" href="/providers/receiving-orders">
+    Understanding order processing
+  </Card>
+
+  <Card title="Order Workflow" icon="arrows-spin" href="/providers/order-workflow">
+    Order status lifecycle
+  </Card>
+
+  <Card title="API Reference" icon="book" href="/api-reference/introduction">
+    Complete API documentation
+  </Card>
+</CardGroup>
