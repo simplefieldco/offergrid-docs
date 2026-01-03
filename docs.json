@@ -119,14 +119,14 @@
           {
             "group": "Provider API",
             "openapi": {
-              "source": "https://offergrid-api.onrender.com/openapi-provider",
+              "source": "https://api.offergrid.io/openapi-provider",
               "directory": "provider-api-reference"
             }
           },
           {
             "group": "Reseller API",
             "openapi": {
-              "source": "https://offergrid-api.onrender.com/openapi-reseller",
+              "source": "https://api.offergrid.io/openapi-reseller",
               "directory": "reseller-api-reference"
             }
           }

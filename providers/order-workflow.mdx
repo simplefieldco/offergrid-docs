@@ -88,7 +88,7 @@ in_progress → failed
 Update order item status with a PATCH request:
 
 ```bash
-curl -X PATCH "https://offergrid-api.onrender.com/provider/orders/ITEM_ID/status" \
+curl -X PATCH "https://api.offergrid.io/provider/orders/ITEM_ID/status" \
   -H "x-api-key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -255,7 +255,7 @@ Integrate OfferGrid status updates into your existing systems:
 ```typescript
 // Example: Update status when your CRM changes
 async function onInstallationScheduled(workOrder) {
-  await fetch(`https://offergrid-api.onrender.com/provider/orders/${workOrder.offergridItemId}/status`, {
+  await fetch(`https://api.offergrid.io/provider/orders/${workOrder.offergridItemId}/status`, {
     method: 'PATCH',
     headers: {
       'x-api-key': process.env.OFFERGRID_API_KEY,

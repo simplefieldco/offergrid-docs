@@ -227,7 +227,7 @@
   ],
   "servers": [
     {
-      "url": "https://offergrid-api.onrender.com",
+      "url": "https://api.offergrid.io",
       "description": "Production"
     },
     { "url": "http://localhost:3000", "description": "Local development" }

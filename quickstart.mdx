@@ -77,17 +77,17 @@ Test your API key with a simple request:
 
 ```bash cURL
 # Providers: List your offers
-curl -X GET https://offergrid-api.onrender.com/provider/offers \
+curl -X GET https://api.offergrid.io/provider/offers \
   -H "x-api-key: YOUR_API_KEY"
 
 # Resellers: Browse catalog
-curl -X GET https://offergrid-api.onrender.com/reseller/catalog \
+curl -X GET https://api.offergrid.io/reseller/catalog \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
 ```typescript TypeScript
 // Providers: List offers
-const response = await fetch('https://offergrid-api.onrender.com/provider/offers', {
+const response = await fetch('https://api.offergrid.io/provider/offers', {
   headers: {
     'x-api-key': process.env.OFFERGRID_API_KEY,
   },
@@ -103,7 +103,7 @@ import os
 
 # Providers: List offers
 response = requests.get(
-  'https://offergrid-api.onrender.com/provider/offers',
+  'https://api.offergrid.io/provider/offers',
   headers={'x-api-key': os.environ['OFFERGRID_API_KEY']}
 )
 
@@ -118,7 +118,7 @@ print(offers)
 ### Create Your First Offer
 
 ```bash
-curl -X POST https://offergrid-api.onrender.com/provider/offers \
+curl -X POST https://api.offergrid.io/provider/offers \
   -H "x-api-key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -134,7 +134,7 @@ curl -X POST https://offergrid-api.onrender.com/provider/offers \
 ### View Incoming Orders
 
 ```bash
-curl -X GET https://offergrid-api.onrender.com/provider/orders \
+curl -X GET https://api.offergrid.io/provider/orders \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
@@ -179,14 +179,14 @@ curl -X GET https://offergrid-api.onrender.com/provider/orders \
 ### Browse Available Services
 
 ```bash
-curl -X GET "https://offergrid-api.onrender.com/reseller/catalog?category=internet&zipCode=94102" \
+curl -X GET "https://api.offergrid.io/reseller/catalog?category=internet&zipCode=94102" \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
 ### Place Your First Order
 
 ```bash
-curl -X POST https://offergrid-api.onrender.com/reseller/orders \
+curl -X POST https://api.offergrid.io/reseller/orders \
   -H "x-api-key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -209,7 +209,7 @@ curl -X POST https://offergrid-api.onrender.com/reseller/orders \
 ### Track Orders
 
 ```bash
-curl -X GET https://offergrid-api.onrender.com/reseller/orders \
+curl -X GET https://api.offergrid.io/reseller/orders \
   -H "x-api-key: YOUR_API_KEY"
 ```
 

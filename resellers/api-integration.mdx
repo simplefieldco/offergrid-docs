@@ -102,7 +102,7 @@ Capture and convert service leads:
 async function buildServiceComparison(zipCode, serviceType) {
   // Fetch available offers
   const offers = await fetch(
-    `https://offergrid-api.onrender.com/reseller/catalog?zipCode=${zipCode}&category=${serviceType}`,
+    `https://api.offergrid.io/reseller/catalog?zipCode=${zipCode}&category=${serviceType}`,
     {
       headers: {
         'x-api-key': process.env.OFFERGRID_API_KEY,

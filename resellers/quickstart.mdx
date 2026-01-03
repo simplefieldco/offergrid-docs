@@ -52,7 +52,7 @@ Follow these steps to start selling services through OfferGrid.
 
   <Accordion title="Via API" icon="code">
     ```bash
-    curl -X GET "https://offergrid-api.onrender.com/reseller/catalog?category=internet&zipCode=94102" \
+    curl -X GET "https://api.offergrid.io/reseller/catalog?category=internet&zipCode=94102" \
       -H "x-api-key: YOUR_API_KEY"
     ```
 
@@ -79,7 +79,7 @@ Follow these steps to start selling services through OfferGrid.
     Via dashboard or API:
 
     ```bash
-    curl -X POST https://offergrid-api.onrender.com/reseller/orders \
+    curl -X POST https://api.offergrid.io/reseller/orders \
       -H "x-api-key: YOUR_API_KEY" \
       -H "Content-Type: application/json" \
       -d '{
@@ -119,11 +119,11 @@ Follow these steps to start selling services through OfferGrid.
   <Accordion title="Via API" icon="code">
     ```bash
     # List all your orders
-    curl -X GET "https://offergrid-api.onrender.com/reseller/orders" \
+    curl -X GET "https://api.offergrid.io/reseller/orders" \
       -H "x-api-key: YOUR_API_KEY"
 
     # Get specific order details
-    curl -X GET "https://offergrid-api.onrender.com/reseller/orders/ORDER_ID" \
+    curl -X GET "https://api.offergrid.io/reseller/orders/ORDER_ID" \
       -H "x-api-key: YOUR_API_KEY"
     ```
   </Accordion>

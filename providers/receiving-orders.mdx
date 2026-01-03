@@ -24,7 +24,7 @@ View all incoming orders in your provider dashboard:
 Retrieve orders programmatically:
 
 ```bash
-curl -X GET "https://offergrid-api.onrender.com/provider/orders?status=pending" \
+curl -X GET "https://api.offergrid.io/provider/orders?status=pending" \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
@@ -136,7 +136,7 @@ When you receive an order:
 To accept an order:
 
 ```bash
-curl -X PATCH "https://offergrid-api.onrender.com/provider/orders/ITEM_ID/status" \
+curl -X PATCH "https://api.offergrid.io/provider/orders/ITEM_ID/status" \
   -H "x-api-key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -154,7 +154,7 @@ curl -X PATCH "https://offergrid-api.onrender.com/provider/orders/ITEM_ID/status
 If you cannot fulfill an order, reject it with a clear reason:
 
 ```bash
-curl -X PATCH "https://offergrid-api.onrender.com/provider/orders/ITEM_ID/status" \
+curl -X PATCH "https://api.offergrid.io/provider/orders/ITEM_ID/status" \
   -H "x-api-key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{

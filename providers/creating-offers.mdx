@@ -63,7 +63,7 @@ Create an offer programmatically using the Provider API:
 <CodeGroup>
 
 ```bash cURL
-curl -X POST https://offergrid-api.onrender.com/provider/offers \
+curl -X POST https://api.offergrid.io/provider/offers \
   -H "x-api-key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -87,7 +87,7 @@ curl -X POST https://offergrid-api.onrender.com/provider/offers \
 ```
 
 ```typescript TypeScript
-const response = await fetch('https://offergrid-api.onrender.com/provider/offers', {
+const response = await fetch('https://api.offergrid.io/provider/offers', {
   method: 'POST',
   headers: {
     'x-api-key': process.env.OFFERGRID_API_KEY,
