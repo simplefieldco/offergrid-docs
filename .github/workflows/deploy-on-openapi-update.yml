@@ -4,6 +4,9 @@ on:
   repository_dispatch:
     types: [openapi-updated]
 
+permissions:
+  contents: write
+
 jobs:
   trigger-deploy:
     runs-on: ubuntu-latest
