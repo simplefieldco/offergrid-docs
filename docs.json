@@ -19,7 +19,7 @@
           },
           {
             "group": "Documentation",
-            "pages": ["provider-documentation", "reseller-documentation"]
+            "pages": ["provider-documentation", "reseller-documentation", "api-documentation"]
           }
         ]
       },
