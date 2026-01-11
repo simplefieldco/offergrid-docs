@@ -6,7 +6,7 @@ icon: 'webhook'
 
 ## Overview
 
-Webhooks let you receive real-time HTTP notifications when events occur in OfferGrid, enabling immediate response to new orders and status changes.
+Webhooks let you receive real-time HTTP notifications when events occur in Offergrid, enabling immediate response to new orders and status changes.
 
 <Note>
   Webhook functionality may be under development. Check with support for current availability and configuration options.
@@ -14,11 +14,11 @@ Webhooks let you receive real-time HTTP notifications when events occur in Offer
 
 ## How Webhooks Work
 
-1. **Configure endpoint**: Tell OfferGrid where to send notifications
+1. **Configure endpoint**: Tell Offergrid where to send notifications
 2. **Event occurs**: New order, status change, etc.
-3. **OfferGrid sends POST**: HTTP POST to your endpoint
+3. **Offergrid sends POST**: HTTP POST to your endpoint
 4. **You respond**: Process the event and return 200 OK
-5. **Retry on failure**: OfferGrid retries if your endpoint is down
+5. **Retry on failure**: Offergrid retries if your endpoint is down
 
 ## Webhook Events
 
@@ -165,7 +165,7 @@ All webhooks follow this structure:
 
 ## Verifying Webhook Signatures
 
-Always verify webhooks are from OfferGrid:
+Always verify webhooks are from Offergrid:
 
 ```typescript
 import crypto from 'crypto';
@@ -303,7 +303,7 @@ npm run dev # Runs on localhost:3000
 # Expose locally with ngrok
 ngrok http 3000
 
-# Use the ngrok URL in OfferGrid webhook config
+# Use the ngrok URL in Offergrid webhook config
 # https://abc123.ngrok.io/webhooks/offergrid
 ```
 

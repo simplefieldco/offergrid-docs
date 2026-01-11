@@ -1,12 +1,12 @@
 ---
 title: 'API Integration Guide'
-description: 'Integrate OfferGrid into your existing systems'
+description: 'Integrate Offergrid into your existing systems'
 icon: 'code'
 ---
 
 ## Overview
 
-The OfferGrid Reseller API lets you browse services, place orders, and track fulfillment programmatically, enabling seamless integration with your existing platforms.
+The Offergrid Reseller API lets you browse services, place orders, and track fulfillment programmatically, enabling seamless integration with your existing platforms.
 
 ## Getting Started
 
@@ -40,7 +40,7 @@ See [Authentication](/authentication) for details.
 
 ### Pattern 1: Property Management Software
 
-Integrate OfferGrid into property management platforms:
+Integrate Offergrid into property management platforms:
 
 ```typescript
 // Example: Add "Order Services" button to tenant portal
@@ -128,7 +128,7 @@ async function captureLeadAndOrder(service, customerInfo) {
   // Save lead to CRM
   await saveToCRM(customerInfo);
 
-  // Place order on OfferGrid
+  // Place order on Offergrid
   const order = await placeOrder({
     offerId: service.id,
     customerInfo,
@@ -364,7 +364,7 @@ const response = await rateLimitedFetch(url, options);
   </Accordion>
 
   <Accordion title="Store order IDs">
-    Map OfferGrid order IDs to your internal order/lead IDs for tracking.
+    Map Offergrid order IDs to your internal order/lead IDs for tracking.
   </Accordion>
 
   <Accordion title="Handle errors gracefully">

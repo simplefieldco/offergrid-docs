@@ -1,12 +1,12 @@
 ---
 title: 'API Integration Guide'
-description: 'Integrate OfferGrid with your existing systems'
+description: 'Integrate Offergrid with your existing systems'
 icon: 'code'
 ---
 
 ## Overview
 
-The OfferGrid Provider API lets you automate offer management and order fulfillment by integrating directly with your existing systems.
+The Offergrid Provider API lets you automate offer management and order fulfillment by integrating directly with your existing systems.
 
 ## Getting Started
 
@@ -42,7 +42,7 @@ See [Authentication](/authentication) for detailed instructions.
 
 ### Pattern 1: Automated Offer Sync
 
-Sync your internal product catalog to OfferGrid:
+Sync your internal product catalog to Offergrid:
 
 ```typescript
 // Example: Daily sync of offers from your CRM
@@ -65,7 +65,7 @@ async function syncOffers() {
   }
 }
 
-// Transform your internal format to OfferGrid format
+// Transform your internal format to Offergrid format
 function transformToOffergridFormat(internalOffer) {
   return {
     name: internalOffer.productName,
@@ -121,10 +121,10 @@ app.post('/webhooks/offergrid/orders', async (req, res) => {
 
 ### Pattern 3: Status Sync from Fulfillment System
 
-Update OfferGrid when your internal status changes:
+Update Offergrid when your internal status changes:
 
 ```typescript
-// Example: Update OfferGrid when your CRM updates order status
+// Example: Update Offergrid when your CRM updates order status
 async function onWorkOrderStatusChange(workOrder) {
   const statusMap = {
     scheduled: 'scheduled',
@@ -307,7 +307,7 @@ Be mindful of rate limits:
   </Accordion>
 
   <Accordion title="Validate webhook signatures">
-    Verify webhook requests actually come from OfferGrid:
+    Verify webhook requests actually come from Offergrid:
 
     ```typescript
     function verifyWebhook(req) {
@@ -396,7 +396,7 @@ app.post('/webhooks/offergrid', async (req, res) => {
   res.sendStatus(200);
 });
 
-// Update OfferGrid when internal status changes
+// Update Offergrid when internal status changes
 async function onInternalStatusChange(workOrder) {
   await client.orders.updateStatus(workOrder.offergridItemId, {
     status: workOrder.status,

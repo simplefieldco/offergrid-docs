@@ -210,7 +210,7 @@
     }
   },
   "info": {
-    "title": "OfferGrid API",
+    "title": "Offergrid API",
     "description": "**Provider API** - Create and manage service offerings, fulfill orders from resellers.\n\nAs a provider, you can:\n- Create and publish service offerings (internet, TV, security, energy, insurance)\n- Control which resellers can access your offers (all, preferred, or selected)\n- View and manage orders from resellers\n- Update order fulfillment status and schedule installations\n- Track order lifecycle from pending to completion",
     "version": "1.0",
     "contact": {}

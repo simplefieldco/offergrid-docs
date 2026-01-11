@@ -15,10 +15,10 @@ Webhooks notify you immediately when order status changes, eliminating the need 
 ## How Webhooks Work
 
 1. Configure your endpoint URL
-2. OfferGrid sends POST requests when events occur
+2. Offergrid sends POST requests when events occur
 3. Your server processes the event
 4. You respond with 200 OK
-5. OfferGrid retries on failure
+5. Offergrid retries on failure
 
 ## Reseller Webhook Events
 
@@ -188,7 +188,7 @@ async function handleRejection(data) {
 
 ## Verifying Signatures
 
-Always verify webhooks are from OfferGrid:
+Always verify webhooks are from Offergrid:
 
 ```typescript
 import crypto from 'crypto';
