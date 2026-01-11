@@ -16,6 +16,10 @@
           {
             "group": "Getting Started",
             "pages": ["index", "quickstart", "how-it-works", "authentication"]
+          },
+          {
+            "group": "Documentation",
+            "pages": ["provider-documentation", "reseller-documentation"]
           }
         ]
       },
