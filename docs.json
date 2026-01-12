@@ -30,6 +30,7 @@
             "group": "Getting Started",
             "pages": [
               "providers/index",
+              "providers/business-case",
               "providers/quickstart"
             ]
           },
