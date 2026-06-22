@@ -15,11 +15,20 @@
         "groups": [
           {
             "group": "Getting Started",
-            "pages": ["index", "quickstart", "how-it-works", "authentication"]
+            "pages": [
+              "index",
+              "quickstart",
+              "how-it-works",
+              "authentication"
+            ]
           },
           {
             "group": "Documentation",
-            "pages": ["provider-documentation", "reseller-documentation", "api-documentation"]
+            "pages": [
+              "provider-documentation",
+              "reseller-documentation",
+              "api-documentation"
+            ]
           }
         ]
       },
@@ -188,5 +197,8 @@
       "github": "https://github.com/simplefieldco/offergrid",
       "linkedin": "https://linkedin.com/company/offergrid"
     }
+  },
+  "metadata": {
+    "lastOpenApiSync": "2026-06-22T05:54:11Z"
   }
 }
